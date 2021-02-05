@@ -1,7 +1,6 @@
 """Gym wrapper environments to convert any environment to a goal-conditioned environment wrapper.
 
-The environment retains its old state, but goals/tasks can be changed during the
-episode.
+The environment enables changing goals during the episode.
 """
 
 from gym import Wrapper
