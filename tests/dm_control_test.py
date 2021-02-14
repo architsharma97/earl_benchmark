@@ -10,7 +10,7 @@ for domain_name, task_name in suite.BENCHMARKING:
 
 
 # Setup video writer - mp4 at 30 fps
-video = Video("video2.mp4", 480, 600)
+video = Video("video.mp4", 480, 600)
 
 # Reset data
 action_spec = env.action_spec()
