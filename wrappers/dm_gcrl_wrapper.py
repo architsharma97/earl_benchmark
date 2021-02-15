@@ -3,9 +3,9 @@
 # that adds Goal Conditioning.
 # Modeled after https://github.com/deepmind/dm_control/blob/master/dm_control/suite/wrappers/action_noise.py
 # How to use: 
-# import filename
+# import this filename
 # env = suite.load(...)
-# env = goal_conditioned.Wrapper(* your args here *)
+# env = this filename.Wrapper(* your args here *)
 # This file is still a WIP
 
 import numpy as np
