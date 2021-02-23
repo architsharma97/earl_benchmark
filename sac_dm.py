@@ -66,7 +66,7 @@ from wrappers import dm_persistent_wrapper
 from tf_agents.environments import parallel_py_environment
 from tf_agents.environments import suite_dm_control
 from tf_agents.environments import wrappers
-
+from tf_agents.environments import dm_control_wrapper
 
 flags.DEFINE_string('root_dir', os.getenv('TEST_UNDECLARED_OUTPUTS_DIR'),
                     'Root directory for writing logs/summaries/checkpoints.')
@@ -156,18 +156,38 @@ def train_eval(
       ]
     else:
       env_wrappers = []
+
+    # Instead of calling suite_dm_control.load(), we call
+    # ._load_env() and write the rest of .load() here directly
+    # so that we can use our custom wrapper.
+
+    # Load train env
+    train_dmc_env = suite_dm_control._load_env(domain_name=env_name,
+                                         task_name=task_name,
+                                         task_kwargs=None,
+                                         environment_kwargs=None,
+                                         visualize_reward=False)
+    train_dmc_env = dm_persistent_wrapper.Wrapper(train_dmc_env, h=500)
+    train_env = dm_control_wrapper.DmControlWrapper(train_dmc_env, render_kwargs=None)
+    for wrapper in env_wrappers:
+        train_env = wrapper(train_env)
     
-    env_wrappers.append(functools.partial(dm_persistent_wrapper.Wrapper, h=100000))
 
-    env_load_fn = functools.partial(suite_dm_control.load,
-                                    task_name=task_name,
-                                    env_wrappers=env_wrappers)
-
-
-    py_env = env_load_fn(env_name)
-    tf_env = tf_py_environment.TFPyEnvironment(py_env)
+    # Load eval env
     eval_env_name = eval_env_name or env_name
-    eval_tf_env = tf_py_environment.TFPyEnvironment(env_load_fn(eval_env_name))
+    eval_dmc_env = suite_dm_control._load_env(domain_name=env_name,
+                                         task_name=task_name,
+                                         task_kwargs=None,
+                                         environment_kwargs=None,
+                                         visualize_reward=False)
+    eval_dmc_env = dm_persistent_wrapper.Wrapper(eval_dmc_env, h=500)
+    eval_env = dm_control_wrapper.DmControlWrapper(eval_dmc_env, render_kwargs=None)
+    for wrapper in env_wrappers:
+        eval_env = wrapper(eval_env)
+
+    # Convert to TFPyEnvironment
+    tf_env = tf_py_environment.TFPyEnvironment(train_env)
+    eval_tf_env = tf_py_environment.TFPyEnvironment(eval_env)
 
     # Old Gym Environment Initialization
     # tf_env = tf_py_environment.TFPyEnvironment(env_load_fn(env_name))
