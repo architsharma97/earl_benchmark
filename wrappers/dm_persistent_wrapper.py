@@ -18,11 +18,29 @@ class Wrapper(control.Environment):
         self._h = h
 
     def reset(self):
-        if (self._step_count >= self._h):
-            self._env.reset()
-
+        # TODO: return a value when reset is called but this condition is not true.
+        # If condition is not true, then we should not reset. 
+        # If we should not reset, what should this method return?
+        if (self._env._step_count >= self._h or self._env._step_count == 0):
+            return self._env.reset()
+        
     def step(self, action):
-        return self._env.step(action)
+        time_step = self._env.step(action)
+        # Override reset_next_step if we are not at horizon yet,
+        # or we are at horizon but episode is not over.
+        if (self._env._reset_next_step and self._env._step_count < self._h):
+            self._env._reset_next_step = False  
+            time_step = dm_env.TimeStep(step_type = dm_env.StepType.MID, 
+                                        reward = time_step.reward,
+                                        discount = 1.0,
+                                        observation = time_step.observation) 
+        elif (self._env._step_count >= self._h and not self._env._reset_next_step):
+            self._env._reset_next_step = True
+            time_step = dm_env.TimeStep(step_type = dm_env.StepType.LAST, 
+                                        reward = time_step.reward,
+                                        discount = time_step.discount,
+                                        observation = time_step.observation) 
+        return time_step
 
     def action_spec(self):
         return self._env.action_spec()
@@ -35,9 +53,12 @@ class Wrapper(control.Environment):
 
     @property
     def physics(self):
-        return self._physics
+        return self._env._physics
 
     @property
     def task(self):
-        return self._task
+        return self._env._task
+
+    def control_timestep(self):
+        return self._env.control_timestep()
 
