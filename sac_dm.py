@@ -83,6 +83,9 @@ def train_eval(
     task_name='run',
     observations_allowlist='position',
     eval_env_name=None,
+    # Horizons for train and evaluation
+    H_t=500,
+    H_e=500,
     # The SAC paper reported:
     # Hopper and Cartpole results up to 1000000 iters,
     # Humanoid results up to 10000000 iters,
@@ -167,7 +170,7 @@ def train_eval(
                                          task_kwargs=None,
                                          environment_kwargs=None,
                                          visualize_reward=False)
-    train_dmc_env = dm_persistent_wrapper.Wrapper(train_dmc_env, h=500)
+    train_dmc_env = dm_persistent_wrapper.Wrapper(train_dmc_env, h=H_t)
     train_env = dm_control_wrapper.DmControlWrapper(train_dmc_env, render_kwargs=None)
     for wrapper in env_wrappers:
         train_env = wrapper(train_env)
@@ -180,7 +183,7 @@ def train_eval(
                                          task_kwargs=None,
                                          environment_kwargs=None,
                                          visualize_reward=False)
-    eval_dmc_env = dm_persistent_wrapper.Wrapper(eval_dmc_env, h=500)
+    eval_dmc_env = dm_persistent_wrapper.Wrapper(eval_dmc_env, h=H_e)
     eval_env = dm_control_wrapper.DmControlWrapper(eval_dmc_env, render_kwargs=None)
     for wrapper in env_wrappers:
         eval_env = wrapper(eval_env)
