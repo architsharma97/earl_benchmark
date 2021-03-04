@@ -70,6 +70,11 @@ from tf_agents.environments import dm_control_wrapper
 
 flags.DEFINE_string('root_dir', os.getenv('TEST_UNDECLARED_OUTPUTS_DIR'),
                     'Root directory for writing logs/summaries/checkpoints.')
+flags.DEFINE_float('reward_scale_factor', 0.1, "Reward scale factor")
+flags.DEFINE_integer('H_t', 1000, "Training Environment Horizon")
+flags.DEFINE_integer('H_e', 1000, "Evaluation Environment Horizon")
+flags.DEFINE_string('env_name', 'cheetah', 'Environment to run on')
+flags.DEFINE_string('task_name', 'run', 'Task to learn')
 flags.DEFINE_multi_string('gin_file', None, 'Path to the trainer config files.')
 flags.DEFINE_multi_string('gin_param', None, 'Gin binding to pass through.')
 
@@ -79,13 +84,15 @@ FLAGS = flags.FLAGS
 @gin.configurable
 def train_eval(
     root_dir,
-    env_name='cheetah',
-    task_name='run',
-    observations_allowlist='position',
+    reward_scale_factor=0.1,
+    # Horizons for training and evaluation
+    H_t=1000,
+    H_e=1000,
+    # Environment and task name (default is "cheetah" and "run")
+    env_name="cheetah",
+    task_name="run",
+    observations_allowlist=["position", "velocity", "touch"], 
     eval_env_name=None,
-    # Horizons for train and evaluation
-    H_t=500,
-    H_e=500,
     # The SAC paper reported:
     # Hopper and Cartpole results up to 1000000 iters,
     # Humanoid results up to 10000000 iters,
@@ -114,7 +121,6 @@ def train_eval(
     alpha_learning_rate=3e-4,
     td_errors_loss_fn=tf.math.squared_difference,
     gamma=0.99,
-    reward_scale_factor=0.1,
     gradient_clipping=None,
     use_tf_functions=True,
     # Params for eval
@@ -155,7 +161,7 @@ def train_eval(
       env_wrappers = [
           functools.partial(
               wrappers.FlattenObservationsWrapper,
-              observations_whitelist=[observations_allowlist])
+              observations_whitelist=observations_allowlist)
       ]
     else:
       env_wrappers = []
@@ -191,11 +197,6 @@ def train_eval(
     # Convert to TFPyEnvironment
     tf_env = tf_py_environment.TFPyEnvironment(train_env)
     eval_tf_env = tf_py_environment.TFPyEnvironment(eval_env)
-
-    # Old Gym Environment Initialization
-    # tf_env = tf_py_environment.TFPyEnvironment(env_load_fn(env_name))
-    # eval_env_name = eval_env_name or env_name
-    # eval_tf_env = tf_py_environment.TFPyEnvironment(env_load_fn(eval_env_name))
 
     # End Environment Initialization
 
@@ -301,6 +302,9 @@ def train_eval(
           'with a random policy.', initial_collect_steps)
       initial_collect_driver.run()
 
+    # Print out replay buffer to check episode boundaries
+    print(replay_buffer.gather_all())
+
     results = metric_utils.eager_compute(
         eval_metrics,
         eval_tf_env,
@@ -393,7 +397,13 @@ def main(_):
   tf.compat.v1.enable_v2_behavior()
   logging.set_verbosity(logging.INFO)
   gin.parse_config_files_and_bindings(FLAGS.gin_file, FLAGS.gin_param)
-  train_eval(FLAGS.root_dir)
+  train_eval(
+        root_dir=FLAGS.root_dir, 
+        reward_scale_factor=FLAGS.reward_scale_factor, 
+        H_t=FLAGS.H_t, 
+        H_e=FLAGS.H_e, 
+        env_name=FLAGS.env_name, 
+        task_name=FLAGS.task_name)
 
 if __name__ == '__main__':
   flags.mark_flag_as_required('root_dir')
