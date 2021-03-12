@@ -71,10 +71,12 @@ from tf_agents.environments import dm_control_wrapper
 flags.DEFINE_string('root_dir', os.getenv('TEST_UNDECLARED_OUTPUTS_DIR'),
                     'Root directory for writing logs/summaries/checkpoints.')
 flags.DEFINE_float('reward_scale_factor', 0.1, "Reward scale factor")
+flags.DEFINE_integer('random_seed', None, 'random seed')
 flags.DEFINE_integer('H_t', 1000, "Training Environment Horizon")
 flags.DEFINE_integer('H_e', 1000, "Evaluation Environment Horizon")
 flags.DEFINE_string('env_name', 'cheetah', 'Environment to run on')
 flags.DEFINE_string('task_name', 'run', 'Task to learn')
+flags.DEFINE_list('observations_allowlist', ["position", "velocity"], "Allowed observation data.")
 flags.DEFINE_multi_string('gin_file', None, 'Path to the trainer config files.')
 flags.DEFINE_multi_string('gin_param', None, 'Gin binding to pass through.')
 
@@ -85,13 +87,14 @@ FLAGS = flags.FLAGS
 def train_eval(
     root_dir,
     reward_scale_factor=0.1,
+    random_seed=None,
     # Horizons for training and evaluation
     H_t=1000,
     H_e=1000,
     # Environment and task name (default is "cheetah" and "run")
     env_name="cheetah",
     task_name="run",
-    observations_allowlist=["position", "velocity", "touch"], 
+    observations_allowlist=["position", "velocity"], 
     eval_env_name=None,
     # The SAC paper reported:
     # Hopper and Cartpole results up to 1000000 iters,
@@ -155,6 +158,9 @@ def train_eval(
   global_step = tf.compat.v1.train.get_or_create_global_step()
   with tf.compat.v2.summary.record_if(
       lambda: tf.math.equal(global_step % summary_interval, 0)):
+    
+    if random_seed is not None:
+      tf.compat.v1.set_random_seed(random_seed)
     
     # Environment Initialization
     if observations_allowlist is not None:
@@ -303,7 +309,7 @@ def train_eval(
       initial_collect_driver.run()
 
     # Print out replay buffer to check episode boundaries
-    print(replay_buffer.gather_all())
+    logging.info("Gather all:", replay_buffer.gather_all())
 
     results = metric_utils.eager_compute(
         eval_metrics,
@@ -362,6 +368,8 @@ def train_eval(
         tf.compat.v2.summary.scalar(
             name='global_steps_per_sec', data=steps_per_sec, step=global_step)
         timed_at_step = global_step_val
+        if global_step_val % eval_interval == 0:
+            metric_utils.log_metrics(train_metrics)
         time_acc = 0
 
       for train_metric in train_metrics:
@@ -399,11 +407,13 @@ def main(_):
   gin.parse_config_files_and_bindings(FLAGS.gin_file, FLAGS.gin_param)
   train_eval(
         root_dir=FLAGS.root_dir, 
-        reward_scale_factor=FLAGS.reward_scale_factor, 
+        reward_scale_factor=FLAGS.reward_scale_factor,
+        random_seed=FLAGS.random_seed, 
         H_t=FLAGS.H_t, 
         H_e=FLAGS.H_e, 
         env_name=FLAGS.env_name, 
-        task_name=FLAGS.task_name)
+        task_name=FLAGS.task_name,
+        observations_allowlist=FLAGS.observations_allowlist)
 
 if __name__ == '__main__':
   flags.mark_flag_as_required('root_dir')
