@@ -62,7 +62,9 @@ from tf_agents.policies import random_tf_policy
 from tf_agents.replay_buffers import tf_uniform_replay_buffer
 from tf_agents.utils import common
 # Additions for dm_control
-from wrappers import dm_persistent_wrapper
+from wrappers import dm_persistent_wrapper, dm_goalcond_wrapper
+from rewards import cheetah_reward_func
+
 from tf_agents.environments import parallel_py_environment
 from tf_agents.environments import suite_dm_control
 from tf_agents.environments import wrappers
@@ -174,7 +176,7 @@ def train_eval(
 
     # Instead of calling suite_dm_control.load(), we call
     # ._load_env() and write the rest of .load() here directly
-    # so that we can use our custom wrapper.
+    # so that we can use our custom wrappers.
 
     # Load train env
     train_dmc_env = suite_dm_control._load_env(domain_name=env_name,
@@ -182,7 +184,11 @@ def train_eval(
                                          task_kwargs=None,
                                          environment_kwargs=None,
                                          visualize_reward=False)
+    # Goal conditioned wrapper
+    # train_dmc_env = dm_goalcond_wrapper.Wrapper(train_dmc_env, 5, cheetah_reward_func) 
+    # Persistent RL wrapper
     train_dmc_env = dm_persistent_wrapper.Wrapper(train_dmc_env, h=H_t)
+    
     train_env = dm_control_wrapper.DmControlWrapper(train_dmc_env, render_kwargs=None)
     for wrapper in env_wrappers:
         train_env = wrapper(train_env)
@@ -195,7 +201,11 @@ def train_eval(
                                          task_kwargs=None,
                                          environment_kwargs=None,
                                          visualize_reward=False)
+    # Goal conditioned wrapper
+    # eval_dmc_env = dm_goalcond_wrapper.Wrapper(eval_dmc_env, 5, cheetah_reward_func)
+    # Persistent RL wrapper
     eval_dmc_env = dm_persistent_wrapper.Wrapper(eval_dmc_env, h=H_e)
+    
     eval_env = dm_control_wrapper.DmControlWrapper(eval_dmc_env, render_kwargs=None)
     for wrapper in env_wrappers:
         eval_env = wrapper(eval_env)
