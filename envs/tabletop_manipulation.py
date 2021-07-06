@@ -49,7 +49,7 @@ class TabletopManipulation(MujocoEnv):
 
     self._task_list = task_list
     self._reward_type = reward_type
-    self.initial_state = initial_state.copy()[0]
+    self.initial_state = initial_states.copy()[0]
     self.goal = self.initial_state.copy()
     self._reset_at_goal = reset_at_goal  # use only in train envs without resets
     super().__init__(model_path=self.MODEL_PATH_TREE, frame_skip=15)
@@ -63,7 +63,7 @@ class TabletopManipulation(MujocoEnv):
 
   def get_next_goal(self):
     # the gripper should return to the original position (def in sparse reward)
-    goal = initial_state.copy()[0]
+    goal = self.initial_state.copy()
 
     cur_task = random.sample(self._task_list.split("-"), 1)[0]
     for task in cur_task.split("__"):
