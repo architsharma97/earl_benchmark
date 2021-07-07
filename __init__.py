@@ -8,10 +8,11 @@ from persistent_rl_benchmark.wrappers import persistent_state_wrapper
 
 # number of initial states being provided to the user
 # for deterministic initial state distributions, it should be 1
-# for stochastic initial state distributions, sample the distribution randomly and save the initial state distribution
+# for stochastic initial state distributions, sample the distribution randomly and save those samples for consistency
 env_config = {
   'tabletop_manipulation': {
     'num_initial_state_samples': 1,
+    'num_goals': 4,
     'train_horizon': int(2e5),
     'eval_horizon': 200,
   },
