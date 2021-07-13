@@ -22,7 +22,7 @@ class TabletopManipulation(MujocoEnv):
       os.path.dirname(os.path.realpath(__file__)), "tabletop_assets", FILE_TREE)
 
   def __init__(self,
-               task_list="rc_o",
+               task_list="rc_r-rc_k-rc_g-rc_b",
                reward_type="dense",
                reset_at_goal=False):
     # r->red, b->blue y->yellow, k->black, o->orange, p->purple
@@ -33,15 +33,13 @@ class TabletopManipulation(MujocoEnv):
     self.objects = [
         "c",
     ]
-    self.target_colors = ["o", "k", "p", "b"]
+    self.target_colors = ["r", "g", "b", "k"]
 
     # TODO: Fill these in automatically
     # Dict of object to index in qpos
     self.object_dict = {
         (0, 0): [2, 3],
     }
-    # Dict of targets to index in geom_pos
-    self.target_dict = {0: 8, 1: 6, 2: 7, 3: 5}
 
     self.attached_object = (-1, -1)
     self.threshold = 0.4
@@ -50,6 +48,7 @@ class TabletopManipulation(MujocoEnv):
     self._task_list = task_list
     self._reward_type = reward_type
     self.initial_state = initial_states.copy()[0]
+    self._goal_list = goal_states.copy()
     self.goal = self.initial_state.copy()
     self._reset_at_goal = reset_at_goal  # use only in train envs without resets
     super().__init__(model_path=self.MODEL_PATH_TREE, frame_skip=15)
@@ -72,7 +71,7 @@ class TabletopManipulation(MujocoEnv):
       target_index = self.target_colors.index(task.split("_")[1])
 
       obj_idx = self.object_dict[(color_to_move, object_to_move)]
-      target_pos = self.model.geom_pos[self.target_dict[target_index]][:2]
+      target_pos = self._goal_list[target_index][2:4]
       goal[obj_idx[0]:obj_idx[1] + 1] = target_pos  # the object
 
     return goal

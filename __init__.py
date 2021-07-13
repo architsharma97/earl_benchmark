@@ -38,7 +38,7 @@ class PersistentRLEnvs(object):
   def get_train_env(self):
     if self._env_name == 'tabletop_manipulation':
       from persistent_rl_benchmark.envs import tabletop_manipulation
-      train_env = tabletop_manipulation.TabletopManipulation(task_list='rc_o-rc_k-rc_p-rc_b',
+      train_env = tabletop_manipulation.TabletopManipulation(task_list='rc_r-rc_k-rc_g-rc_b',
                                                              reward_type=self._reward_type,
                                                              reset_at_goal=self._reset_train_env_at_goal)
 
@@ -47,7 +47,7 @@ class PersistentRLEnvs(object):
   def get_eval_env(self):
     if self._env_name == 'tabletop_manipulation':
       from persistent_rl_benchmark.envs import tabletop_manipulation
-      eval_env = tabletop_manipulation.TabletopManipulation(task_list='rc_o-rc_k-rc_p-rc_b',
+      eval_env = tabletop_manipulation.TabletopManipulation(task_list='rc_r-rc_k-rc_g-rc_b',
                                                             reward_type=self._reward_type)
 
     return persistent_state_wrapper.PersistentStateWrapper(eval_env, episode_horizon=self._eval_horizon)
