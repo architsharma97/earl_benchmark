@@ -1,6 +1,9 @@
 "API to load Persistent RL environments."
 
+import os
 import numpy as np
+import pickle
+
 from persistent_rl_benchmark.wrappers import persistent_state_wrapper
 
 # for every environment, add an entry for the configuration of the environment
@@ -35,6 +38,9 @@ class PersistentRLEnvs(object):
     self._eval_horizon = kwargs.get('eval_horizon', env_config[env_name]['eval_horizon'])
     self._num_initial_state_samples = kwargs.get('num_initial_state_samples', env_config[env_name]['num_initial_state_samples'])
 
+    self._train_env = self.get_train_env()
+    self._eval_env = self.get_eval_env()
+
   def get_train_env(self):
     if self._env_name == 'tabletop_manipulation':
       from persistent_rl_benchmark.envs import tabletop_manipulation
@@ -52,6 +58,9 @@ class PersistentRLEnvs(object):
 
     return persistent_state_wrapper.PersistentStateWrapper(eval_env, episode_horizon=self._eval_horizon)
 
+  def get_envs(self):
+    return self._train_env, self._eval_env
+
   def get_initial_states(self, num_samples=None):
     '''
     Always returns initial state of the shape N x state_dim
@@ -59,11 +68,12 @@ class PersistentRLEnvs(object):
     if num_samples is None:
       num_samples = self._num_initial_state_samples
 
-    # TODO: potentially load environments from disk
+    # TODO: potentially load initial states from disk
     if self._env_name == 'tabletop_manipulation':
       from persistent_rl_benchmark.envs import tabletop_manipulation
       return tabletop_manipulation.initial_states
     else:
+      # make a new copy of environment to ensure that related parameters do not get affected by collection of reset states
       cur_env = self.get_eval_env()
       reset_states = []
       while len(reset_states) < self._num_initial_state_samples:
@@ -78,4 +88,13 @@ class PersistentRLEnvs(object):
       return tabletop_manipulation.goal_states
 
   def get_demonstrations(self):
-    pass
+    # use the current file to locate the demonstrations
+    base_path = os.path.abspath(__file__)
+    demo_dir = os.path.join(os.path.dirname(base_path), 'demonstrations')
+    try:
+      forward_demos = pickle.load(open(os.path.join(demo_dir, self._env_name, 'forward/demo_data.pkl'), 'rb'))
+      reverse_demos = pickle.load(open(os.path.join(demo_dir, self._env_name, 'reverse/demo_data.pkl'), 'rb'))
+    except:
+      print('please download the demonstrations corresponding to ', self._env_name)
+
+    return forward_demos, reverse_demos
