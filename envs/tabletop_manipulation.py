@@ -164,11 +164,10 @@ class TabletopManipulation(MujocoEnv):
         reward += 2. * np.exp(
             -(np.linalg.norm(obs[2 * obj_idx:2 * obj_idx + 2] -
                              obs[2 * obj_idx + 6:2 * obj_idx + 8])**2) / 0.01)
-      # gripper reward
-      if self._task_list == "rc_o":
-        grip_to_object = np.linalg.norm(obs[:2] - obs[2:4])
-        reward += -grip_to_object
-        reward += 0.5 * np.exp(-(grip_to_object**2) / 0.01)
+
+      grip_to_object = 0.5 * np.linalg.norm(obs[:2] - obs[2:4])
+      reward += -grip_to_object
+      reward += 0.5 * np.exp(-(grip_to_object**2) / 0.01)
 
     return reward
 

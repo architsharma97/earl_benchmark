@@ -5,6 +5,7 @@ import numpy as np
 import pickle
 
 from persistent_rl_benchmark.wrappers import persistent_state_wrapper
+from persistent_rl_benchmark.wrappers import lifelong_wrapper
 
 # for every environment, add an entry for the configuration of the environment
 # make a default configuration for environment, the user can change the parameters by passing it to the constructor.
@@ -12,12 +13,22 @@ from persistent_rl_benchmark.wrappers import persistent_state_wrapper
 # number of initial states being provided to the user
 # for deterministic initial state distributions, it should be 1
 # for stochastic initial state distributions, sample the distribution randomly and save those samples for consistency
-env_config = {
+transfer_env_config = {
   'tabletop_manipulation': {
     'num_initial_state_samples': 1,
     'num_goals': 4,
     'train_horizon': int(2e5),
     'eval_horizon': 200,
+  },
+}
+
+# for lifelong versions of the problem, only set the training horizons and goal/task change frequency.
+lifelong_env_config = {
+  'tabletop_manipulation': {
+    'num_initial_state_samples': 1,
+    'num_goals': 4,
+    'train_horizon': int(5e4),
+    'goal_change_frequency': 400,
   },
 }
 
@@ -27,28 +38,40 @@ class PersistentRLEnvs(object):
                env_name,
                reward_type='sparse',
                reset_train_env_at_goal=False,
+               setup_as_lifelong_learning=False,
                # parameters that have default values in the config
                **kwargs):
     self._env_name = env_name
     self._reward_type = reward_type
     self._reset_train_env_at_goal = reset_train_env_at_goal
+    self._setup_as_lifelong_learning = setup_as_lifelong_learning
 
     # resolve to default parameters if not provided by the user
-    self._train_horizon = kwargs.get('train_horizon', env_config[env_name]['train_horizon'])
-    self._eval_horizon = kwargs.get('eval_horizon', env_config[env_name]['eval_horizon'])
-    self._num_initial_state_samples = kwargs.get('num_initial_state_samples', env_config[env_name]['num_initial_state_samples'])
+    if not self._setup_as_lifelong_learning:
+      self._train_horizon = kwargs.get('train_horizon', transfer_env_config[env_name]['train_horizon'])
+      self._eval_horizon = kwargs.get('eval_horizon', transfer_env_config[env_name]['eval_horizon'])
+      self._num_initial_state_samples = kwargs.get('num_initial_state_samples', transfer_env_config[env_name]['num_initial_state_samples'])
 
-    self._train_env = self.get_train_env()
-    self._eval_env = self.get_eval_env()
+      self._train_env = self.get_train_env()
+      self._eval_env = self.get_eval_env()
+    else:
+      self._train_horizon = kwargs.get('train_horizon', lifelong_env_config[env_name]['train_horizon'])
+      self._num_initial_state_samples = kwargs.get('num_initial_state_samples', lifelong_env_config[env_name]['num_initial_state_samples'])
+      self._goal_change_frequency = kwargs.get('goal_change_frequency', lifelong_env_config[env_name]['goal_change_frequency'])
+      self._train_env = self.get_train_env(lifelong=True)
 
-  def get_train_env(self):
+  def get_train_env(self, lifelong=False):
     if self._env_name == 'tabletop_manipulation':
       from persistent_rl_benchmark.envs import tabletop_manipulation
       train_env = tabletop_manipulation.TabletopManipulation(task_list='rc_r-rc_k-rc_g-rc_b',
                                                              reward_type=self._reward_type,
                                                              reset_at_goal=self._reset_train_env_at_goal)
 
-    return persistent_state_wrapper.PersistentStateWrapper(train_env, episode_horizon=self._train_horizon)
+    train_env = persistent_state_wrapper.PersistentStateWrapper(train_env, episode_horizon=self._train_horizon)
+    if not lifelong:
+      return train_env
+    else:
+      return lifelong_wrapper.LifelongWrapper(train_env, self._goal_change_frequency)
 
   def get_eval_env(self):
     if self._env_name == 'tabletop_manipulation':
@@ -59,7 +82,10 @@ class PersistentRLEnvs(object):
     return persistent_state_wrapper.PersistentStateWrapper(eval_env, episode_horizon=self._eval_horizon)
 
   def get_envs(self):
-    return self._train_env, self._eval_env
+    if not self._setup_as_lifelong_learning:
+      return self._train_env, self._eval_env
+    else:
+      return self._train_env
 
   def get_initial_states(self, num_samples=None):
     '''
@@ -94,7 +120,6 @@ class PersistentRLEnvs(object):
     try:
       forward_demos = pickle.load(open(os.path.join(demo_dir, self._env_name, 'forward/demo_data.pkl'), 'rb'))
       reverse_demos = pickle.load(open(os.path.join(demo_dir, self._env_name, 'reverse/demo_data.pkl'), 'rb'))
+      return forward_demos, reverse_demos
     except:
       print('please download the demonstrations corresponding to ', self._env_name)
-
-    return forward_demos, reverse_demos

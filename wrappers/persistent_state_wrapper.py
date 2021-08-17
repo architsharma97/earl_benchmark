@@ -20,13 +20,12 @@ class PersistentStateWrapper(Wrapper):
     return self.env.reset()
 
   def step(self, action):
-    obs, reward, done, info = self.env.step(
-        action)  # always check if the underneath env is done
+    obs, reward, done, info = self.env.step(action)
     
     self._total_step_count += 1
     self._steps_since_reset += 1
 
-    if not done and self._steps_since_reset >= episode_horizon:
+    if not done and self._steps_since_reset >= self._episode_horizon:
       done = True
 
     return obs, reward, done, info
@@ -34,3 +33,7 @@ class PersistentStateWrapper(Wrapper):
   @property
   def num_interventions(self):
     return self._num_interventions
+
+  @property
+  def total_steps(self):
+    return self._total_step_count
