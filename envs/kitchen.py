@@ -98,7 +98,7 @@ goal_list['light_switch'][17:19] = light_switch_goal
 
 class Kitchen(KitchenTaskRelaxV1):
 
-  def __init__(self, reward_type="dense", task="open_microwave"):
+  def __init__(self, task="open_microwave", reward_type="dense"):
     self._reward_type = reward_type
     if self._reward_type != 'dense':
         raise ValueError("Kitchen environment only supports dense rewards.")
