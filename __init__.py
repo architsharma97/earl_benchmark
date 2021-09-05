@@ -20,6 +20,12 @@ transfer_env_config = {
     'train_horizon': int(2e5),
     'eval_horizon': 200,
   },
+  'kitchen': {
+    'num_initial_state_samples': 1,
+    'train_horizon': int(2e5),
+    'eval_horizon': 200,
+    'task': 'open_microwave',
+  },
 }
 
 # for lifelong versions of the problem, only set the training horizons and goal/task change frequency.
@@ -29,6 +35,12 @@ lifelong_env_config = {
     'num_goals': 4,
     'train_horizon': int(5e4),
     'goal_change_frequency': 400,
+  },
+  'kitchen': {
+    'num_initial_state_samples': 1,
+    'train_horizon': int(5e4),
+    'goal_change_frquency': 400,
+    'task': 'open_microwave',
   },
 }
 
@@ -66,8 +78,13 @@ class PersistentRLEnvs(object):
       train_env = tabletop_manipulation.TabletopManipulation(task_list='rc_r-rc_k-rc_g-rc_b',
                                                              reward_type=self._reward_type,
                                                              reset_at_goal=self._reset_train_env_at_goal)
+    elif self._env_name == 'kitchen':
+      from persistent_rl_benchmark.envs import kitchen
+      kitchen_task = kwargs.get('kitchen_task', transfer_env_config[self._env_name]['task'])  
+      train_env = kitchen.Kitchen(task=kitchen_task, reward_type=self._reward_type)
 
     train_env = persistent_state_wrapper.PersistentStateWrapper(train_env, episode_horizon=self._train_horizon)
+    
     if not lifelong:
       return train_env
     else:
@@ -78,6 +95,10 @@ class PersistentRLEnvs(object):
       from persistent_rl_benchmark.envs import tabletop_manipulation
       eval_env = tabletop_manipulation.TabletopManipulation(task_list='rc_r-rc_k-rc_g-rc_b',
                                                             reward_type=self._reward_type)
+    elif self._env_name == 'kitchen':
+      from persistent_rl_benchmark.envs import kitchen
+      kitchen_task = kwargs.get('kitchen_task', transfer_env_config[self._env_name]['task'])  
+      train_env = kitchen.Kitchen(task=kitchen_task, reward_type=self._reward_type)
 
     return persistent_state_wrapper.PersistentStateWrapper(eval_env, episode_horizon=self._eval_horizon)
 
@@ -98,6 +119,9 @@ class PersistentRLEnvs(object):
     if self._env_name == 'tabletop_manipulation':
       from persistent_rl_benchmark.envs import tabletop_manipulation
       return tabletop_manipulation.initial_states
+    elif self._env_name == 'kitchen':
+      from persistent_rl_benchmark.envs import kitchen
+      return kitchen.initial_states
     else:
       # make a new copy of environment to ensure that related parameters do not get affected by collection of reset states
       cur_env = self.get_eval_env()
@@ -112,6 +136,10 @@ class PersistentRLEnvs(object):
     if self._env_name == 'tabletop_manipulation':
       from persistent_rl_benchmark.envs import tabletop_manipulation
       return tabletop_manipulation.goal_states
+    if self._env_name == 'kitchen':
+      from persistent_rl_benchmark.envs import kitchen
+      kitchen_task = kwargs.get('kitchen_task', transfer_env_config[self._env_name]['task'])  
+      return np.array([kitchen.goal_list[kitchen_task]])
 
   def get_demonstrations(self):
     # use the current file to locate the demonstrations
