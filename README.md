@@ -11,3 +11,5 @@ goal_states = env_loader.get_goal_states()
 forward_demos, reverse_demos = env_loader.get_demonstrations()
 
 ```
+
+To specify task for the kitchen environment, use the kitchen_task argument when creating the env_loader (Currently supported tasks: open_microwave, bottom_burner, hinge_cabinet, light_switch).
