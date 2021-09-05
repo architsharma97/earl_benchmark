@@ -57,6 +57,7 @@ class PersistentRLEnvs(object):
     self._reward_type = reward_type
     self._reset_train_env_at_goal = reset_train_env_at_goal
     self._setup_as_lifelong_learning = setup_as_lifelong_learning
+    self._kwargs = kwargs
 
     # resolve to default parameters if not provided by the user
     if not self._setup_as_lifelong_learning:
@@ -80,7 +81,7 @@ class PersistentRLEnvs(object):
                                                              reset_at_goal=self._reset_train_env_at_goal)
     elif self._env_name == 'kitchen':
       from persistent_rl_benchmark.envs import kitchen
-      kitchen_task = kwargs.get('kitchen_task', transfer_env_config[self._env_name]['task'])  
+      kitchen_task = self._kwargs.get('kitchen_task', transfer_env_config[self._env_name]['task'])  
       train_env = kitchen.Kitchen(task=kitchen_task, reward_type=self._reward_type)
 
     train_env = persistent_state_wrapper.PersistentStateWrapper(train_env, episode_horizon=self._train_horizon)
@@ -97,8 +98,8 @@ class PersistentRLEnvs(object):
                                                             reward_type=self._reward_type)
     elif self._env_name == 'kitchen':
       from persistent_rl_benchmark.envs import kitchen
-      kitchen_task = kwargs.get('kitchen_task', transfer_env_config[self._env_name]['task'])  
-      train_env = kitchen.Kitchen(task=kitchen_task, reward_type=self._reward_type)
+      kitchen_task = self._kwargs.get('kitchen_task', transfer_env_config[self._env_name]['task'])  
+      eval_env = kitchen.Kitchen(task=kitchen_task, reward_type=self._reward_type)
 
     return persistent_state_wrapper.PersistentStateWrapper(eval_env, episode_horizon=self._eval_horizon)
 
@@ -138,7 +139,7 @@ class PersistentRLEnvs(object):
       return tabletop_manipulation.goal_states
     if self._env_name == 'kitchen':
       from persistent_rl_benchmark.envs import kitchen
-      kitchen_task = kwargs.get('kitchen_task', transfer_env_config[self._env_name]['task'])  
+      kitchen_task = self._kwargs.get('kitchen_task', transfer_env_config[self._env_name]['task'])  
       return np.array([kitchen.goal_list[kitchen_task]])
 
   def get_demonstrations(self):

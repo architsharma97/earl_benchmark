@@ -78,6 +78,8 @@ initial_states = np.array([[
     -0.27057564,
 ]])
 
+supported_tasks = ['open_microwave', 'bottom_burner', 'hinge_cabinet', 'light_switch']
+
 goal_list = {}
 
 goal_list['open_microwave'] = initial_states[0].copy()
@@ -99,9 +101,11 @@ goal_list['light_switch'][17:19] = light_switch_goal
 class Kitchen(KitchenTaskRelaxV1):
 
   def __init__(self, task="open_microwave", reward_type="dense"):
-    self._reward_type = reward_type
-    if self._reward_type != 'dense':
+    if reward_type != 'dense':
         raise ValueError("Kitchen environment only supports dense rewards.")
+    if not task in supported_tasks:
+        raise ValueError("Error: Kitchen environment does not support the given task.")
+    self._reward_type = reward_type
     self._task = task
     super().__init__()
 
