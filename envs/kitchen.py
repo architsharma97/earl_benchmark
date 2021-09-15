@@ -1,4 +1,4 @@
-"""Kitchen environment."""
+""""Kitchen environment."""
 
 # Add Kitchen assets adept_envs/ folder to the python path.
 import sys
@@ -18,9 +18,10 @@ ELEMENT_INDICES_LL = [
     [17, 18],  # Lightswitch
     [19],  # Slide
     [20, 21],  # Hinge
-    [22],  # Microwave
-    [23, 24, 25, 26, 27, 28, 29]  # Kettle
+    [22] # Microwave
 ]
+
+# [23, 24, 25, 26, 27, 28, 29]  # Kettle
 
 initial_states = np.array([[
     -0.56617326,
@@ -53,34 +54,37 @@ initial_states = np.array([[
     -8.145112e-19,
     -1.1252103e-05,
     -2.8055027e-19,
-    -0.44,
-    0.152,
-    2.226,
-    0.65359545,
-    -0.65307516,
-    -0.2703603,
-    -0.27057564,
 ]])
 
-supported_tasks = ['open_microwave', 'bottom_burner', 'hinge_cabinet', 'light_switch']
+supported_tasks = ['open_microwave', 'bottom_burner', 'top_burner', 'light_switch', 'slide_cabinet', 'hinge_cabinet']
 
 goal_list = {}
+goal_states = {}
 
 goal_list['open_microwave'] = initial_states[0].copy()
 goal_list['open_microwave'][22] = -0.7
 
-# Goal state values from https://github.com/rail-berkeley/d4rl/blob/master/d4rl/kitchen/kitchen_envs.py
+# Goal states from https://github.com/rail-berkeley/d4rl/blob/master/d4rl/kitchen/kitchen_envs.py
 goal_list['bottom_burner'] = initial_states[0].copy()
-bottom_burner_goal = [-0.88, -0.01]
-goal_list['bottom_burner'][11:13] = bottom_burner_goal
+goal_states['bottom_burner'] = [-0.88, -0.01]
+goal_list['bottom_burner'][11:13] = goal_states['bottom_burner']
 
-goal_list['hinge_cabinet'] = initial_states[0].copy()
-hinge_cabinet_goal = [0., 1.45]
-goal_list['hinge_cabinet'][20:22] = hinge_cabinet_goal
+goal_list['top_burner'] = initial_states[0].copy()
+goal_states['top_burner'] = [-0.92, -0.01]
+goal_list['top_burner'][15:17] = goal_states['top_burner']
 
 goal_list['light_switch'] = initial_states[0].copy()
-light_switch_goal = [-0.69, -0.05]
-goal_list['light_switch'][17:19] = light_switch_goal
+goal_states['light_switch'] = [-0.69, -0.05]
+goal_list['light_switch'][17:19] = goal_states['light_switch']
+
+goal_list['slide_cabinet'] = initial_states[0].copy()
+goal_states['slide_cabinet'] = [0.37]
+goal_list['slide_cabinet'][19:20] = goal_states['slide_cabinet']
+
+goal_list['hinge_cabinet'] = initial_states[0].copy()
+goal_states['hinge_cabinet'] = [0., 1.45]
+goal_list['hinge_cabinet'][20:22] = goal_states['hinge_cabinet']
+
 
 class Kitchen(KitchenTaskRelaxV1):
 
@@ -98,11 +102,19 @@ class Kitchen(KitchenTaskRelaxV1):
 
   def _get_obs(self):
     ob = super()._get_obs()
-    return ob[:30]
+    return ob[:23]
 
   def get_next_goal(self):
     return goal_list[self._task]
 
+  def _task_reward(self, task_name, joint1, joint2=None):
+    reward_dict  = {}
+    reward_dict['true_reward'] = -np.linalg.norm(self.sim.named.data.qpos[joint1][0] - goal_states[task_name][0])
+    if joint2 != None:
+        reward_dict['true_reward'] += -np.linalg.norm(self.sim.named.data.qpos[joint2][0] - goal_states[task_name][1])
+    reward_dict['r_total'] = reward_dict['true_reward']
+    return reward_dict
+        
   def _get_reward_n_score(self, obs_dict):
         reward_dict = {}
         if self._task == 'open_microwave':
@@ -112,17 +124,15 @@ class Kitchen(KitchenTaskRelaxV1):
             reward_dict['bonus'] = -np.linalg.norm(self.sim.data.mocap_pos[0]-self.sim.named.data.site_xpos['microhandle_site'])
             reward_dict['r_total'] = 10 * reward_dict['true_reward'] + reward_dict['bonus']
         elif self._task == 'bottom_burner':
-            reward_dict['true_reward'] = -np.linalg.norm(self.sim.named.data.qpos['knob_Joint_2'][0] - bottom_burner_goal[0])
-            reward_dict['true_reward'] += -np.linalg.norm(self.sim.named.data.qpos['burner_Joint_2'][0] - bottom_burner_goal[1])
-            reward_dict['r_total'] = reward_dict['true_reward']
+            reward_dict = self._task_reward("bottom_burner", "knob_Joint_2", "burner_Joint_2")
+        elif self._task == 'top_burner':
+            reward_dict = self._task_reward("top_burner", "knob_Joint_4", "burner_Joint_4")
+        elif self._task == 'slide_cabinet':
+            reward_dict = self._task_reward("slide_cabinet", "slidedoor_joint")
         elif self._task == 'hinge_cabinet':
-            reward_dict['true_reward'] = -np.linalg.norm(self.sim.named.data.qpos['leftdoorhinge'][0] - hinge_cabinet_goal[0])
-            reward_dict['true_reward'] += -np.linalg.norm(self.sim.named.data.qpos['rightdoorhinge'][0] - hinge_cabinet_goal[1])
-            reward_dict['r_total'] = reward_dict['true_reward']
+            reward_dict = self._task_reward("hinge_cabinet", "leftdoorhinge", "rightdoorhinge")
         elif self._task == 'light_switch':
-            reward_dict['true_reward'] = -np.linalg.norm(self.sim.named.data.qpos['lightswitch_joint'][0] - light_switch_goal[0])
-            reward_dict['true_reward'] += -np.linalg.norm(self.sim.named.data.qpos['light_joint'][0] - light_switch_goal[1])
-            reward_dict['r_total'] = reward_dict['true_reward']
+            reward_dict = self._task_reward("light_switch", "lightswitch_joint", "light_joint")
         else:
             raise Exception("Error: Task not implemented.")
         score = 0.
