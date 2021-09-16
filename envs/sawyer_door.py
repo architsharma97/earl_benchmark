@@ -87,7 +87,7 @@ class SawyerDoorV2(SawyerDoorCloseEnvV2):
     obs = super()._get_obs()
     # xyz and gripper distance for end effector
     endeff_config = obs[:4]
-    obj_pos = obj_pos = self._get_pos_objects()
+    obj_pos = self._get_pos_objects()
     obs = np.concatenate([
         endeff_config, obj_pos, self.goal,
     ])

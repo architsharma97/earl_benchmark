@@ -32,6 +32,12 @@ transfer_env_config = {
     'train_horizon': int(2e5),
     'eval_horizon': 300,
   },
+  'sawyer_peg': {
+    'num_initial_state_samples': 15,
+    'num_goals': 1,
+    'train_horizon': int(1e5),
+    'eval_horizon': 200,
+  },
   'kitchen': {
     'num_initial_state_samples': 1,
     'train_horizon': int(2e5),
@@ -53,6 +59,12 @@ lifelong_env_config = {
     'num_goals': 1,
     'train_horizon': int(5e4),
     'goal_change_frequency': 600,
+  },
+  'sawyer_peg': {
+    'num_initial_state_samples': 15,
+    'num_goals': 1,
+    'train_horizon': int(5e4),
+    'goal_change_frequency': 400,
   },
   'kitchen': {
     'num_initial_state_samples': 1,
@@ -106,7 +118,10 @@ class PersistentRLEnvs(object):
       from persistent_rl_benchmark.envs import sawyer_door
       train_env = sawyer_door.SawyerDoorV2(reward_type=self._reward_type,
                                            reset_at_goal=self._reset_train_env_at_goal)
-
+    elif self._env_name == 'sawyer_peg':
+      from persistent_rl_benchmark.envs import sawyer_peg
+      train_env = sawyer_peg.SawyerPegV2(reward_type=self._reward_type,
+                                         reset_at_goal=self._reset_train_env_at_goal)
     elif self._env_name == 'kitchen':
       from persistent_rl_benchmark.envs import kitchen
       kitchen_task = self._kwargs.get('kitchen_task', transfer_env_config[self._env_name]['task'])  
@@ -127,11 +142,12 @@ class PersistentRLEnvs(object):
     elif self._env_name == 'sawyer_door':
       from persistent_rl_benchmark.envs import sawyer_door
       eval_env = sawyer_door.SawyerDoorV2(reward_type=self._reward_type)
-
+    elif self._env_name == 'sawyer_peg':
+      from persistent_rl_benchmark.envs import sawyer_peg
+      eval_env = sawyer_peg.SawyerPegV2(reward_type=self._reward_type)
     elif self._env_name == 'tabletop_3obj':
       from persistent_rl_benchmark.envs import tabletop_manipulation_3obj
       eval_env = tabletop_manipulation_3obj.TabletopManipulation(reward_type=self._reward_type)
-
     elif self._env_name == 'kitchen':
       from persistent_rl_benchmark.envs import kitchen
       kitchen_task = self._kwargs.get('kitchen_task', transfer_env_config[self._env_name]['task'])  
@@ -162,6 +178,10 @@ class PersistentRLEnvs(object):
       from persistent_rl_benchmark.envs import sawyer_door
       return sawyer_door.initial_states
 
+    elif self._env_name == 'sawyer_peg':
+      from persistent_rl_benchmark.envs import sawyer_peg
+      return sawyer_peg.initial_states
+
     elif self._env_name == 'tabletop_3obj':
       from persistent_rl_benchmark.envs import tabletop_manipulation_3obj
       return tabletop_manipulation_3obj.initial_states
@@ -188,6 +208,10 @@ class PersistentRLEnvs(object):
     elif self._env_name == 'sawyer_door':
       from persistent_rl_benchmark.envs import sawyer_door
       return sawyer_door.goal_states
+    
+    elif self._env_name == 'sawyer_peg':
+      from persistent_rl_benchmark.envs import sawyer_peg
+      return sawyer_peg.goal_states
 
     elif self._env_name == 'tabletop_3obj':
       from persistent_rl_benchmark.envs import tabletop_manipulation_3obj
