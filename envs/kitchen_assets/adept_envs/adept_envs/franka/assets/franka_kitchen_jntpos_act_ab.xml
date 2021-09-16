@@ -83,16 +83,12 @@
                 <include file="../../../../adept_models/kitchen/assets/microwave_chain.xml"/>
             </body>
         </body>
-        <body name="kettle" pos="-0.269 0.35 1.626">
-            <freejoint/>
-            <include file="../../../../adept_models/kitchen/assets/kettle_chain.xml"/>
-        </body>
 
     </worldbody>
 
 
     <keyframe>
-        <key qpos='0.16 -1.76 1.84 -2.51 0.36 0.79 1.55 0.00 0.0 1.25561e-05 1.57437e-07 1.25561e-05 1.57437e-07 1.25561e-05 1.57437e-07 1.25561e-05 1.57437e-07 8.24417e-05 9.48283e-05 0 0 0 0 -0.269 0.35 1.61523 1 1.34939e-19 -3.51612e-05 -7.50168e-19'/>
+        <key qpos='0.16 -1.76 1.84 -2.51 0.36 0.79 1.55 0.00 0.0 1.25561e-05 1.57437e-07 1.25561e-05 1.57437e-07 1.25561e-05 1.57437e-07 1.25561e-05 1.57437e-07 8.24417e-05 9.48283e-05 0 0 0 0'/>
     </keyframe>
 
 </mujoco>
