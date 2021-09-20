@@ -35,12 +35,12 @@ class KitchenV0(robot_env.RobotEnv):
         os.path.dirname(__file__),
         '../franka/assets/franka_kitchen_jntpos_act_ab.xml')
     N_DOF_ROBOT = 9
-    N_DOF_OBJECT = 21
+    N_DOF_OBJECT = 14
 
     def __init__(self, robot_params={}, frame_skip=40):
         self.obs_dict = {}
         self.robot_noise_ratio = 0.1  # 10% as per robot_config specs
-        self.goal = np.zeros((30,))
+        self.goal = np.zeros((self.N_DOF_ROBOT + self.N_DOF_OBJECT,))
 
         self.midpoint_pos = np.array([-0.440, 0.1, 2.226])
         self.range = np.array([0.01, 0.01, 0.01])
@@ -69,9 +69,7 @@ class KitchenV0(robot_env.RobotEnv):
                                     3.71350919e-02, -2.66279850e-04, -5.18043486e-05,  3.12877220e-05,
                                    -4.51199853e-05, -3.90842156e-06, -4.22629655e-05,  6.28065475e-05,
                                     4.04984708e-05,  4.62730939e-04, -2.26906415e-04, -4.65501369e-04,
-                                   -6.44129196e-03, -1.77048263e-03,  1.08009684e-03, -2.69397440e-01,
-                                    3.50383255e-01,  1.61944683e+00,  1.00618764e+00,  4.06395120e-03,
-                                   -6.62095997e-03, -2.68278933e-04])
+                                   -6.44129196e-03, -1.77048263e-03,  1.08009684e-03])
 
         self.init_qvel = self.sim.model.key_qvel[0].copy()
 
@@ -120,7 +118,7 @@ class KitchenV0(robot_env.RobotEnv):
             'obs_dict': self.obs_dict,
             'rewards': reward_dict,
             'score': score,
-            'images': np.asarray(self.render(mode='rgb_array'))
+            'images': [] # np.asarray(self.render(mode='rgb_array'))
         }
         # self.render()
         return obs, reward_dict['r_total'], done, env_info
