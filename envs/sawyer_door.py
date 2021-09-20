@@ -57,7 +57,7 @@ class SawyerDoorV2(SawyerDoorCloseEnvV2):
     self.goal_space = Box(np.array(goal_low), np.array(goal_high))
     self._partially_observable = False
     self._set_task_called = True
-    self._target_pos = self.goal[3:]
+    self._target_pos = self.goal[4:]
     self._reward_type = reward_type
 
     self.metadata = {
