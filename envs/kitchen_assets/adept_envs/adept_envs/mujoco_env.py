@@ -31,7 +31,7 @@ from adept_envs.simulation.sim_robot import MujocoSimRobot, RenderMode
 
 DEFAULT_RENDER_SIZE = 480
 
-USE_DM_CONTROL = True
+USE_DM_CONTROL = False
 
 
 class MujocoEnv(gym.Env):
