@@ -88,8 +88,6 @@ class Kitchen(KitchenTaskRelaxV1):
   def __init__(self, task="all_pairs", reward_type="dense"):
     self._initial_states = copy.deepcopy(initial_states)
     self._goal_states = copy.deepcopy(goal_states)
-    self.total_time = 0
-    self.num_steps = 0
     if reward_type != 'dense':
         raise ValueError("Kitchen environment only supports dense rewards.")
 
@@ -156,33 +154,22 @@ class Kitchen(KitchenTaskRelaxV1):
                     'burner3': 'knob4_site',
                     'light_switch': 'light_site',}
 
-    if self._task in shaped_reward_tasks:
-      reward_dict['true_reward'] = -np.linalg.norm(obs[9:23] - obs[9+23:23+23])
-      reward_dict['bonus'] = -np.linalg.norm(self.sim.data.mocap_pos[0] - self.sim.data.get_site_xpos(task_to_site[self._task]))
-      reward_dict['r_total'] = 10 * reward_dict['true_reward'] + reward_dict['bonus']
-    else:
-      # simple reward
-      reward_dict['true_reward'] = -np.linalg.norm(obs[9:23] - obs[9+23:23+23])
+    reward_dict['true_reward'] = -10 * np.linalg.norm(obs[9:23] - obs[9+23:23+23])
+    
+    reaching_component = False
+    for key in component_to_state_idx.keys():
+      if key == 'arm':
+        continue
 
-      # sequential reward -> match every component 
-      reward_dict['true_reward'] = 0.
-      reaching_component = False
-      for key in component_to_state_idx.keys():
-        if key == 'arm':
-          continue
-
-        cur_idxs = np.array(component_to_state_idx[key])
-        num_idxs = len(component_to_state_idx[key])
-        if np.linalg.norm(obs[cur_idxs] - obs[cur_idxs + 23]) < num_idxs * 0.01:
-          reward_dict['true_reward'] += 1
-        else:
-          reward_dict['true_reward'] += -np.linalg.norm(obs[cur_idxs] - obs[cur_idxs + 23]) / num_idxs
-          if not reaching_component:
-            reaching_component = True
-            reward_dict['true_reward'] += -0.2 * np.linalg.norm(self.sim.data.mocap_pos[0] - \
-                                                self.sim.data.get_site_xpos(task_to_site[key]))
-
-      reward_dict['r_total'] = reward_dict['true_reward']
+      cur_idxs = np.array(component_to_state_idx[key])
+      num_idxs = len(component_to_state_idx[key])
+      if np.linalg.norm(obs[cur_idxs] - obs[cur_idxs + 23]) < num_idxs * 0.01:
+        reward_dict['true_reward'] += 1
+      elif not reaching_component:
+        reaching_component = True
+        reward_dict['true_reward'] += -0.5 * np.linalg.norm(self.sim.data.mocap_pos[0] - \
+                                            self.sim.data.get_site_xpos(task_to_site[key]))
+    reward_dict['r_total'] = reward_dict['true_reward']
 
     score = 0.
     return reward_dict, score
@@ -196,11 +183,7 @@ class Kitchen(KitchenTaskRelaxV1):
     return bool(np.linalg.norm(obs[9:23] - obs[9+23:23+23]) <= 0.3)
 
   def step(self, a, b=None):
-    start = time.time()
     obs, reward, done, info = super().step(a, b)
-    end = time.time()
-    self.total_time += start - end
-    self.num_steps += 1
     return obs, reward, done, info
 
   # functions for rendering

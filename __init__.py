@@ -40,8 +40,8 @@ transfer_env_config = {
   },
   'kitchen': {
     'num_initial_state_samples': 1,
-    'train_horizon': int(2e5),
-    'eval_horizon': 200,
+    'train_horizon': int(1e5),
+    'eval_horizon': 400,
     'task': 'all_pairs',
   },
 }
@@ -69,7 +69,7 @@ lifelong_env_config = {
   'kitchen': {
     'num_initial_state_samples': 1,
     'train_horizon': int(5e4),
-    'goal_change_frquency': 400,
+    'goal_change_frequency': 400,
     'task': 'all_pairs',
   },
 }
