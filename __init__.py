@@ -44,6 +44,12 @@ transfer_env_config = {
     'eval_horizon': 400,
     'task': 'all_pairs',
   },
+  'minitaur':{
+    'num_initial_state_samples': 1,
+    'num_goals': 1,
+    'train_horizon': int(2e5),
+    'eval_horizon': 1000,
+  }
 }
 
 # for lifelong versions of the problem, only set the training horizons and goal/task change frequency.
@@ -72,6 +78,12 @@ lifelong_env_config = {
     'goal_change_frequency': 400,
     'task': 'all_pairs',
   },
+  'minitaur':{
+    'num_initial_state_samples': 1,
+    'num_goals': 1,
+    'train_horizon': int(2e5),
+    'goal_change_frequency': 400,
+  }
 }
 
 class PersistentRLEnvs(object):
@@ -109,6 +121,14 @@ class PersistentRLEnvs(object):
       train_env = tabletop_manipulation.TabletopManipulation(task_list='rc_r-rc_k-rc_g-rc_b',
                                                              reward_type=self._reward_type,
                                                              reset_at_goal=self._reset_train_env_at_goal)
+    elif self._env_name == 'minitaur':
+      try:
+        #from pybullet_envs.bullet import minitaur_gym_env
+        from persistent_rl_benchmark.envs import minitaur_gym_env
+      except:
+        raise Exception("Must install pybullet to use minitaur env")
+      #train_env = minitaur_gym_env.MinitaurBulletEnv()
+      train_env = minitaur_gym_env.GoalConditionedMinitaurBulletEnv(distance_weight=5e-2)
 
     elif self._env_name == 'tabletop_3obj':
       from persistent_rl_benchmark.envs import tabletop_manipulation_3obj
@@ -152,9 +172,22 @@ class PersistentRLEnvs(object):
       from persistent_rl_benchmark.envs import kitchen
       kitchen_task = self._kwargs.get('kitchen_task', transfer_env_config[self._env_name]['task'])  
       eval_env = kitchen.Kitchen(task=kitchen_task, reward_type=self._reward_type)
-
+    elif self._env_name == 'minitaur':
+      try:
+        #from pybullet_envs.bullet import minitaur_gym_env
+        from persistent_rl_benchmark.envs import minitaur_gym_env
+      except:
+        raise Exception("Must install pybullet to use minitaur env")
+      #eval_env = minitaur_gym_env.MinitaurBulletEnv()
+      eval_env = minitaur_gym_env.GoalConditionedMinitaurBulletEnv(distance_weight=5e-2)
 
     return persistent_state_wrapper.PersistentStateWrapper(eval_env, episode_horizon=self._eval_horizon)
+
+  def has_demos(self):
+    if self._env_name in ['tabletop_manipulation']: 
+        return True
+    else:
+        return False
 
   def get_envs(self):
     if not self._setup_as_lifelong_learning:

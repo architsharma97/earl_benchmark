@@ -35,7 +35,12 @@ class LifelongWrapper(Wrapper):
     if self._steps_since_goal_change >= self._goal_change_frequency:
       self._steps_since_goal_change = 0
       self.env.reset_goal() # assumes that env reset_goal function for randomly sampling the goal
-      obs = self.env._get_obs() # assumes a _get_obs method (with modified goal)
+
+      try:
+          obs = self.env._get_obs() # assumes a _get_obs method (with modified goal)
+      except:
+          obs = self.env.env._get_obs() # assumes a _get_obs method (with modified goal)
+
 
     return obs, reward, done, info
 

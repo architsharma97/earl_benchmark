@@ -30,6 +30,13 @@ class PersistentStateWrapper(Wrapper):
 
     return obs, reward, done, info
 
+  def is_successful(self, obs=None):
+    if hasattr(self.env, 'is_successful'):
+        return self.env.is_successful(obs)
+    else:
+        # TODO(kelvinxx): what should the default behavior be?
+        return False
+
   @property
   def num_interventions(self):
     return self._num_interventions
