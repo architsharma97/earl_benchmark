@@ -289,7 +289,7 @@ class Minitaur(object):
     upper_bound[2 * self.num_motors:3 * self.num_motors] = (motor.OBSERVED_TORQUE_LIMIT
                                                            )  # Joint torque.
     upper_bound[3 * self.num_motors:-3] = 1.0  # Quaternion of base orientation.
-    upper_bound[-3:] = 1.5  # Max observation limit (TODO) kelvinxx: (check this)
+    upper_bound[-2:] = 1.5  # Max observation limit (TODO) kelvinxx: (check this)
     return upper_bound
 
   def GetObservationLowerBound(self):
@@ -320,7 +320,7 @@ class Minitaur(object):
     observation.extend(self.GetMotorVelocities().tolist())
     observation.extend(self.GetMotorTorques().tolist())
     observation.extend(list(self.GetBaseOrientation()))
-    observation.extend(list(self.GetBasePosition()))
+    observation.extend(list(self.GetBasePosition())[:2])
     return observation
 
   def ApplyAction(self, motor_commands):
