@@ -450,9 +450,9 @@ class MinitaurBulletEnv(gym.Env):
 
 class GoalConditionedMinitaurBulletEnv(MinitaurBulletEnv):
     def __init__(self,
-                 goal_locations=[[0.8, 0.0], [0.4, 0.0], [-0.4, 0.0], [-0.8, 0.0]],
+                 goal_locations=[[0.4, 0.0], [0.2, 0.0], [-0.2, 0.0], [-0.4, 0.0]],
                  visualize_goal=False,
-                 motor_velocity_limit=250.,
+                 motor_velocity_limit=150.,
                  distance_weight=2,
                  **kwargs
                  ):
