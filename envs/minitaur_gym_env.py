@@ -15,6 +15,7 @@ from gym.utils import seeding
 import numpy as np
 import pybullet
 from pybullet_utils import bullet_client as bc
+from numbers import Number
 from . import minitaur
 import os
 import pybullet_data
@@ -29,12 +30,24 @@ MOTOR_TORQUE_OBSERVATION_INDEX = MOTOR_VELOCITY_OBSERVATION_INDEX + NUM_MOTORS
 BASE_ORIENTATION_OBSERVATION_INDEX = MOTOR_TORQUE_OBSERVATION_INDEX + NUM_MOTORS
 ACTION_EPS = 0.01
 OBSERVATION_EPS = 0.01
-RENDER_HEIGHT = 130
-RENDER_WIDTH = 240
+RENDER_HEIGHT = 260
+RENDER_WIDTH = 480
+#RENDER_HEIGHT = 130
+#RENDER_WIDTH = 240
 
-# TODO(kelvinxx): change this
-duckStartPos = [0, 0, 0.25]
-duckStartOrn = [0.5, 0.5, 0.5, 0.5]
+
+WALL_POSITIONS = [
+    (-1.5,-1.0, 0), (-1.5, 0.0, 0), (-1.5, 1.0, 0), #-x side
+    ( 1.5,-1.0, 0), ( 1.5, 0.0, 0), ( 1.5, 1.0, 0), #+x side
+    (-1.0,-1.5, 0), ( 0.0,-1.5, 0), ( 1.0,-1.5, 0), #-y side
+    (-1.0, 1.5, 0), ( 0.0, 1.5, 0), ( 1.0, 1.5, 0), #+y side
+]
+WALL_FACINGS = [
+    ( 1, 0), ( 1, 0), ( 1, 0),
+    (-1, 0), (-1, 0), (-1, 0),
+    ( 0, 1), ( 0, 1), ( 0, 1),
+    ( 0,-1), ( 0,-1), ( 0,-1),
+]
 
 
 class MinitaurBulletEnv(gym.Env):
@@ -68,10 +81,11 @@ class MinitaurBulletEnv(gym.Env):
       motor_kd=0.02,
       torque_control_enabled=False,
       motor_overheat_protection=True,
-      hard_reset=True,
+      hard_reset=False,
       on_rack=False,
       render=False,
       kd_for_pd_controllers=0.3,
+      walls=True,
       env_randomizer=minitaur_env_randomizer.MinitaurEnvRandomizer()):
     """Initialize the minitaur gym environment.
 
@@ -139,6 +153,7 @@ class MinitaurBulletEnv(gym.Env):
     self._cam_pitch = -30
     self._hard_reset = True
     self._kd_for_pd_controllers = kd_for_pd_controllers
+    self._walls = walls
     self._last_frame_time = 0.0
     print("urdf_root=" + self._urdf_root)
     self._env_randomizer = env_randomizer
@@ -170,6 +185,40 @@ class MinitaurBulletEnv(gym.Env):
   def configure(self, args):
     self._args = args
 
+  def get_quat_from_ori(self, ori):
+    """ Get the quaternion of a given orientation type.
+    Args:
+        ori: None - default orientation,
+             Number - yaw rotation,
+             (3,) vec - euler rotation (rpy),
+             (4,) vec - quaternion.
+    Returns:
+        (4,) vec: quaternion.
+    """
+    if ori is None:
+      quat = self._pybullet_client.getQuaternionFromEuler([0, 0, 0])
+    elif isinstance(ori, Number):
+      quat = self._pybullet_client.getQuaternionFromEuler([0, 0, ori])
+    elif len(ori) == 3:
+      quat = self._pybullet_client.getQuaternionFromEuler(ori)
+    elif len(ori) == 4:
+      quat = ori
+    else:
+      raise ValueError("ori can only be: None, a number, a vec3, or a vec4")
+    return quat
+
+  def spawn_walls(self, pos, facing):
+    ori = np.arctan2(facing[1], facing[0])
+    quat = self.get_quat_from_ori(ori)
+    wall_id = self._pybullet_client.loadURDF( 
+      os.path.join(currentdir, 'minitaur_assets/wall_tile.urdf'),
+      baseOrientation=quat,
+      basePosition=pos,
+      globalScaling=1.0,
+      useFixedBase=True, 
+      flags=self._pybullet_client.URDF_MERGE_FIXED_LINKS)
+    return wall_id
+
   def reset(self):
     if self._hard_reset:
       self._pybullet_client.resetSimulation()
@@ -183,6 +232,12 @@ class MinitaurBulletEnv(gym.Env):
       self._pybullet_client.setGravity(0, 0, -10)
       acc_motor = self._accurate_motor_model_enabled
       motor_protect = self._motor_overheat_protection
+      
+      if self._walls:
+        self._wall_ids = []
+        for pos, facing in zip(WALL_POSITIONS, WALL_FACINGS):
+          self._wall_ids.append(self.spawn_walls(pos, facing))
+
       self.minitaur = (minitaur.Minitaur(pybullet_client=self._pybullet_client,
                                          urdf_root=self._urdf_root,
                                          time_step=self._time_step,
@@ -393,17 +448,19 @@ class MinitaurBulletEnv(gym.Env):
     _seed = seed
     _step = step
 
-
 class GoalConditionedMinitaurBulletEnv(MinitaurBulletEnv):
     def __init__(self,
-                 goal_locations=[[1.0, 0.0], [-1.0, 0.0]],
+                 goal_locations=[[0.8, 0.0], [0.4, 0.0], [-0.4, 0.0], [-0.8, 0.0]],
                  visualize_goal=False,
+                 motor_velocity_limit=250.,
+                 distance_weight=5,
                  **kwargs
                  ):
       self._goal_locations = goal_locations
       self._goal = goal_locations[0]
 
-      super(GoalConditionedMinitaurBulletEnv, self).__init__(**kwargs)
+      super(GoalConditionedMinitaurBulletEnv, self).__init__(
+        motor_velocity_limit=motor_velocity_limit, distance_weight=distance_weight, **kwargs)
       # update observations space (TODO): kelvinxx clean this up
       observation_high = np.zeros((self.observation_space.shape[0] + 2,))
       observation_high[:-2] = self.observation_space.high
@@ -430,11 +487,30 @@ class GoalConditionedMinitaurBulletEnv(MinitaurBulletEnv):
           goal_idx = np.random.randint(len(self._goal_locations))
       self._goal = self._goal_locations[goal_idx]
 
+    def get_next_goal(self):
+        return self._goal 
+
+    def is_successful(self, obs=None):
+        if obs is None:
+            obs = self._get_observation()
+        current_pos = np.array(obs[-4:-2])
+        goal_pos = np.array(obs[-2:])
+        if np.sqrt(np.sum((current_pos - goal_pos)**2)) < 0.1:
+            return 1.0
+        else:
+            return 0.0
+
+    def step(self, action):
+        obs, rew, done, info = super().step(action)
+        info['success'] = self.is_successful(obs)
+        return obs, rew, done, info
+
     def _reward(self):
       current_base_position = self.minitaur.GetBasePosition()
       x_dist = current_base_position[0] - self._goal[0] 
       y_dist = current_base_position[1] - self._goal[1] 
-      distance_reward = -np.sqrt(x_dist**2 + y_dist**2)
+      distance_reward = -abs(x_dist) - abs(y_dist)
+
       shake_reward = -abs(current_base_position[2] - self._last_base_position[2])
       self._last_base_position = current_base_position
       energy_reward = np.abs(
