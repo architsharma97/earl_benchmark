@@ -46,8 +46,8 @@ transfer_env_config = {
   },
   'minitaur':{
     'num_initial_state_samples': 1,
-    'num_goals': 1,
-    'train_horizon': int(2e5),
+    'num_goals': 4,
+    'train_horizon': int(1e5),
     'eval_horizon': 1000,
   }
 }
@@ -80,9 +80,9 @@ lifelong_env_config = {
   },
   'minitaur':{
     'num_initial_state_samples': 1,
-    'num_goals': 1,
-    'train_horizon': int(2e5),
-    'goal_change_frequency': 400,
+    'num_goals': 5,
+    'train_horizon': int(1e5),
+    'goal_change_frequency': 2000,
   }
 }
 
@@ -128,7 +128,7 @@ class PersistentRLEnvs(object):
       except:
         raise Exception("Must install pybullet to use minitaur env")
       #train_env = minitaur_gym_env.MinitaurBulletEnv()
-      train_env = minitaur_gym_env.GoalConditionedMinitaurBulletEnv(distance_weight=5e-2)
+      train_env = minitaur_gym_env.GoalConditionedMinitaurBulletEnv(distance_weight=1.0)
 
     elif self._env_name == 'tabletop_3obj':
       from persistent_rl_benchmark.envs import tabletop_manipulation_3obj
@@ -179,12 +179,12 @@ class PersistentRLEnvs(object):
       except:
         raise Exception("Must install pybullet to use minitaur env")
       #eval_env = minitaur_gym_env.MinitaurBulletEnv()
-      eval_env = minitaur_gym_env.GoalConditionedMinitaurBulletEnv(distance_weight=5e-2)
+      eval_env = minitaur_gym_env.GoalConditionedMinitaurBulletEnv(distance_weight=1.0)
 
     return persistent_state_wrapper.PersistentStateWrapper(eval_env, episode_horizon=self._eval_horizon)
 
   def has_demos(self):
-    if self._env_name in ['tabletop_manipulation']: 
+    if self._env_name in ['tabletop_manipulation', 'sawyer_door', 'sawyer_peg', 'tabletop_3obj']: 
         return True
     else:
         return False
