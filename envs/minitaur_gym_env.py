@@ -482,12 +482,17 @@ class GoalConditionedMinitaurBulletEnv(MinitaurBulletEnv):
       super().reset()
       return self._noisy_observation()
 
-    def reset_goal(self, goal_idx=None):
-      if goal_idx is None:
-          goal_idx = np.random.randint(len(self._goal_locations))
-      self._goal = self._goal_locations[goal_idx]
+    def reset_goal(self, goal=None):
+      if goal is None:
+          goal = self.get_next_goal()
+      if goal.shape[0] == 2:
+        self._goal = goal
+      elif goal.shape[0] == 30:
+        self._goal = goal[-2:]
 
     def get_next_goal(self):
+      goal_idx = np.random.randint(len(self._goal_locations))
+      self._goal = np.array(self._goal_locations[goal_idx])
       return self._goal 
 
     def is_successful(self, obs=None):
@@ -503,7 +508,7 @@ class GoalConditionedMinitaurBulletEnv(MinitaurBulletEnv):
     def step(self, action):
       obs, rew, done, info = super().step(action)
       info['success'] = self.is_successful(obs)
-      return obs, rew, done, info
+      return obs, rew, False, info
 
     def _reward(self):
       current_base_position = self.minitaur.GetBasePosition()
@@ -525,8 +530,18 @@ class GoalConditionedMinitaurBulletEnv(MinitaurBulletEnv):
       self._objectives.append([distance_reward, energy_reward, drift_reward, shake_reward])
       return reward
 
+    def compute_reward(self, obs):
+      x_dist = obs[28] - obs[30] 
+      y_dist = obs[29] - obs[31] 
+      distance_reward = -abs(x_dist)
+      energy_reward = np.abs(np.dot(obs[8:16], obs[16:24])) * self._time_step
+      reward = (self._distance_weight * distance_reward - self._energy_weight * energy_reward)
+      return reward
+
     def _get_observation(self):
       self._observation = super()._get_observation()
       self._observation.extend(self._goal)
       return self._observation
 
+    def _get_obs(self):
+      return self._get_observation()
