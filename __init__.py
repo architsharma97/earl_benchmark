@@ -1,11 +1,11 @@
-"API to load Persistent RL environments."
+"API to load EARL environments."
 
 import os
 import numpy as np
 import pickle
 
-from persistent_rl_benchmark.wrappers import persistent_state_wrapper
-from persistent_rl_benchmark.wrappers import lifelong_wrapper
+from earl_benchmark.wrappers import persistent_state_wrapper
+from earl_benchmark.wrappers import lifelong_wrapper
 
 # for every environment, add an entry for the configuration of the environment
 # make a default configuration for environment, the user can change the parameters by passing it to the constructor.
@@ -86,7 +86,7 @@ lifelong_env_config = {
   }
 }
 
-class PersistentRLEnvs(object):
+class EARLEnvs(object):
   def __init__(self,
                # parameters that need to be set for every environment
                env_name,
@@ -117,33 +117,33 @@ class PersistentRLEnvs(object):
 
   def get_train_env(self, lifelong=False):
     if self._env_name == 'tabletop_manipulation':
-      from persistent_rl_benchmark.envs import tabletop_manipulation
+      from earl_benchmark.envs import tabletop_manipulation
       train_env = tabletop_manipulation.TabletopManipulation(task_list='rc_r-rc_k-rc_g-rc_b',
                                                              reward_type=self._reward_type,
                                                              reset_at_goal=self._reset_train_env_at_goal)
     elif self._env_name == 'minitaur':
       try:
         #from pybullet_envs.bullet import minitaur_gym_env
-        from persistent_rl_benchmark.envs import minitaur_gym_env
+        from earl_benchmark.envs import minitaur_gym_env
       except:
         raise Exception("Must install pybullet to use minitaur env")
       #train_env = minitaur_gym_env.MinitaurBulletEnv()
       train_env = minitaur_gym_env.GoalConditionedMinitaurBulletEnv()
 
     elif self._env_name == 'tabletop_3obj':
-      from persistent_rl_benchmark.envs import tabletop_manipulation_3obj
+      from earl_benchmark.envs import tabletop_manipulation_3obj
       train_env = tabletop_manipulation_3obj.TabletopManipulation(reward_type=self._reward_type,
                                                                   reset_at_goal=self._reset_train_env_at_goal)
     elif self._env_name == 'sawyer_door':
-      from persistent_rl_benchmark.envs import sawyer_door
+      from earl_benchmark.envs import sawyer_door
       train_env = sawyer_door.SawyerDoorV2(reward_type=self._reward_type,
                                            reset_at_goal=self._reset_train_env_at_goal)
     elif self._env_name == 'sawyer_peg':
-      from persistent_rl_benchmark.envs import sawyer_peg
+      from earl_benchmark.envs import sawyer_peg
       train_env = sawyer_peg.SawyerPegV2(reward_type=self._reward_type,
                                          reset_at_goal=self._reset_train_env_at_goal)
     elif self._env_name == 'kitchen':
-      from persistent_rl_benchmark.envs import kitchen
+      from earl_benchmark.envs import kitchen
       kitchen_task = self._kwargs.get('kitchen_task', transfer_env_config[self._env_name]['task'])  
       train_env = kitchen.Kitchen(task=kitchen_task, reward_type=self._reward_type)
 
@@ -156,26 +156,26 @@ class PersistentRLEnvs(object):
 
   def get_eval_env(self):
     if self._env_name == 'tabletop_manipulation':
-      from persistent_rl_benchmark.envs import tabletop_manipulation
+      from earl_benchmark.envs import tabletop_manipulation
       eval_env = tabletop_manipulation.TabletopManipulation(task_list='rc_r-rc_k-rc_g-rc_b',
                                                             reward_type=self._reward_type)
     elif self._env_name == 'sawyer_door':
-      from persistent_rl_benchmark.envs import sawyer_door
+      from earl_benchmark.envs import sawyer_door
       eval_env = sawyer_door.SawyerDoorV2(reward_type=self._reward_type)
     elif self._env_name == 'sawyer_peg':
-      from persistent_rl_benchmark.envs import sawyer_peg
+      from earl_benchmark.envs import sawyer_peg
       eval_env = sawyer_peg.SawyerPegV2(reward_type=self._reward_type)
     elif self._env_name == 'tabletop_3obj':
-      from persistent_rl_benchmark.envs import tabletop_manipulation_3obj
+      from earl_benchmark.envs import tabletop_manipulation_3obj
       eval_env = tabletop_manipulation_3obj.TabletopManipulation(reward_type=self._reward_type)
     elif self._env_name == 'kitchen':
-      from persistent_rl_benchmark.envs import kitchen
+      from earl_benchmark.envs import kitchen
       kitchen_task = self._kwargs.get('kitchen_task', transfer_env_config[self._env_name]['task'])  
       eval_env = kitchen.Kitchen(task=kitchen_task, reward_type=self._reward_type)
     elif self._env_name == 'minitaur':
       try:
         #from pybullet_envs.bullet import minitaur_gym_env
-        from persistent_rl_benchmark.envs import minitaur_gym_env
+        from earl_benchmark.envs import minitaur_gym_env
       except:
         raise Exception("Must install pybullet to use minitaur env")
       #eval_env = minitaur_gym_env.MinitaurBulletEnv()
@@ -204,23 +204,23 @@ class PersistentRLEnvs(object):
 
     # TODO: potentially load initial states from disk
     if self._env_name == 'tabletop_manipulation':
-      from persistent_rl_benchmark.envs import tabletop_manipulation
+      from earl_benchmark.envs import tabletop_manipulation
       return tabletop_manipulation.initial_states
 
     elif self._env_name == 'sawyer_door':
-      from persistent_rl_benchmark.envs import sawyer_door
+      from earl_benchmark.envs import sawyer_door
       return sawyer_door.initial_states
 
     elif self._env_name == 'sawyer_peg':
-      from persistent_rl_benchmark.envs import sawyer_peg
+      from earl_benchmark.envs import sawyer_peg
       return sawyer_peg.initial_states
 
     elif self._env_name == 'tabletop_3obj':
-      from persistent_rl_benchmark.envs import tabletop_manipulation_3obj
+      from earl_benchmark.envs import tabletop_manipulation_3obj
       return tabletop_manipulation_3obj.initial_states
 
     elif self._env_name == 'kitchen':
-      from persistent_rl_benchmark.envs import kitchen
+      from earl_benchmark.envs import kitchen
       kitchen_task = self._kwargs.get('kitchen_task', transfer_env_config[self._env_name]['task'])  
       env = kitchen.Kitchen(task=kitchen_task, reward_type=self._reward_type)
       return env.get_init_states()
@@ -237,23 +237,23 @@ class PersistentRLEnvs(object):
 
   def get_goal_states(self):
     if self._env_name == 'tabletop_manipulation':
-      from persistent_rl_benchmark.envs import tabletop_manipulation
+      from earl_benchmark.envs import tabletop_manipulation
       return tabletop_manipulation.goal_states
 
     elif self._env_name == 'sawyer_door':
-      from persistent_rl_benchmark.envs import sawyer_door
+      from earl_benchmark.envs import sawyer_door
       return sawyer_door.goal_states
     
     elif self._env_name == 'sawyer_peg':
-      from persistent_rl_benchmark.envs import sawyer_peg
+      from earl_benchmark.envs import sawyer_peg
       return sawyer_peg.goal_states
 
     elif self._env_name == 'tabletop_3obj':
-      from persistent_rl_benchmark.envs import tabletop_manipulation_3obj
+      from earl_benchmark.envs import tabletop_manipulation_3obj
       return tabletop_manipulation_3obj.goal_states
 
     if self._env_name == 'kitchen':
-      from persistent_rl_benchmark.envs import kitchen
+      from earl_benchmark.envs import kitchen
       return kitchen.goal_states
 
   def get_demonstrations(self):
