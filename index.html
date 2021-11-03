@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>EARL: Environments for Autonomous Learning</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom fonts for this template -->
+  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="vendor/simple-line-icons/css/simple-line-icons.css">
+
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet"> 
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@300;400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Muli" rel="stylesheet">
+
+  <!-- Plugin CSS -->
+  <link rel="stylesheet" href="device-mockups/device-mockups.min.css">
+
+  <!-- Custom styles for this template -->
+  <link href="css/new-age.css" rel="stylesheet">
+
+</head>
+
+<body id="page-top">
+
+  <!-- Navigation -->
+<!--   <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand js-scroll-trigger" href="#page-top">Start Bootstrap</a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        Menu
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="#download">Download</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="#features">Features</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="#contact">Contact</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav> -->
+
+  <header class="masthead">
+    <div class="container h-100">
+      <div class="row h-100">
+        <div class="col-lg-7 my-auto">
+          <div class="header-content mx-auto">
+            <h1 class="mb-5">EARL: Environments for Autonomous Learning</h1>
+            <a href="https://github.com/architsharma97/persistent_rl_benchmark" class="btn btn-outline btn-xl js-scroll-trigger">Source Code</a>
+            <a href="https://arxiv.org/abs/TBD" class="btn btn-outline btn-xl js-scroll-trigger">Paper TBD</a>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </header>
+
+  <section class="download text-center" id="abstract" style="background: rgba(253,187,45,0.075);">
+    <div class="container" >
+      <div class="section-heading text-center">
+        <h2>Abstract</h2>
+        <p>
+            Reinforcement learning (RL) provides a naturalistic framing for learning through trial and error, which is appealing both because of its simplicity and effectiveness and because of its resemblance to how humans and animals acquire skills through experience. However, real-world embodied learning, such as that performed by humans and animals, is situated in a continual, non-episodic world, whereas common benchmark tasks in RL are episodic, with the environment resetting between trials to provide the agent with multiple attempts.
+            This discrepancy presents a major challenge when attempting to take RL algorithms developed for episodic simulated environments and run them on real-world platforms, such as robots. We aim to address this discrepancy by laying out a framework for <i>Autonomous Reinforcement Learning</i> (ARL): reinforcement learning where the agent not only learns through its own experience, but also contends with lack of human supervision to reset between trials.
+            We introduce a simulated benchmark <strong>EARL</strong> around this framework, containing a set of diverse and challenging simulated tasks reflective of the hurdles introduced to learning when only a minimal reliance on extrinsic intervention can be assumed. We show that standard approaches to episodic RL and existing approaches struggle as interventions are minimized, underscoring the need for developing new algorithms for reinforcement learning with a greater focus on autonomy.
+        </p>
+        <hr>
+      </div>
+    </div>
+  </section>
+
+  <section class="features" id="alltasks">
+    <div class="container">
+      <h2>About</h2>
+      <img src="img/arl.png" class="img-fluid" alt="">
+      <p>
+          There are two evaluation schemes in autonomous RL. First, the deployment setting (top row, (1)), where we are interested in obtaining a policy during a training phase that performs well when deployed from a an initial state.
+          Second, the continuing setting (bottom row, (2)), where the agent is only evaluated on its cumulative performance.
+      </p>
+      <div class="row">
+        <div class="col-md-8 mx-auto">
+          <!-- <h2 class="section-heading">Discover what all the buzz is about!</h2> -->
+
+        </div>
+      </div>
+    </div>
+</section>
+<section class="features" id="alltasks" style="background: rgba(253,187,45,0.075);">
+
+    <div class="container">
+        <!--<h2>Meta-World Evaluation Modes</h2>-->
+      <h2>Environments</h2>
+
+      <h3>Tabletop-Organization</h3>
+      <p>
+          The Tabletop-Organization environment consists of a gripper agent, modeled as a pointmass, which can grasp objects that are close to it. The agent's goal is to bring a mug to four different locations designated by a goal coaster. The agent's reward function is a sparse indicator function when the mug is placed at the goal location. Limited demonstrations are provided to the agent.
+      </p>
+      <div class="text-center" >
+        <img src="figures/tabletop.png" class="img-fluid rounded" style="width: 500px;" alt="">
+      </div>
+    </div>
+
+    <div class="container">
+      <!--<h2>Meta-World Evaluation Modes</h2>-->
+     <h3>Sawyer-Door</h3>
+     <p>
+      The Sawyer-Door task, from the <a href="https://meta-world.github.io">MetaWorld benchmark</a> consists of a Sawyer robot arm who's goal is to close the door whenever it is in an open position. The task reward is a sparse indicator function based on the angle of the door. Repeatedly practicing this task implicitly requires the agent to learn to open the door. Limited demonstrations for opening and closing the door are provided.    </p>
+    <div class="text-center" >
+      <img src="figures/door.png" class="img-fluid rounded" style="width: 500px;" alt="Sawyer Door vid">
+    </div>
+  </div>
+
+    <div class="container">
+      <h3>Sawyer-Peg</h3>
+      <p>
+        The Sawyer-Peg task (Yu et al., 2020) consists of a Sawyer robot required to insert a peg into a designed goal location. The task reward is a sparse indicator function for when the peg is in the goal location. In the transfer setting, the agent must learn to insert the peg starting on the table. Limited demonstrations for inserting and removing the peg are provided.
+      </p>
+      <div class="text-center" >
+        <img src="figures/peg.png" class="img-fluid rounded" style="width: 500px;" alt="">
+      </div>
+
+      <h3>Franka-Kitchen</h3>
+      <p>
+          The Franka-Kitchen is a domain where a 9-DoF robot, situated in a kitchen environment, is required to solve tasks consisting of compound object interactions. The environment consists of a microwave, a hinged cabinet, a burner, and a slide cabinet. One example task is to open the microwave, door and burner. 
+      </p>
+      <p>
+        This domain presents a number of distinct challenges for ARL. First, the compound nature of each task results in a challenging long horizon problem, which introduces exploration and credit assignment challenges. Second, while generalization is important in solving the environment, combining reset behaviors are equally important given the compositional nature of the task.
+      </p>
+      <div class="text-center" >
+        <img src="figures/kitchen.png" class="img-fluid rounded" style="width: 500px;" alt="">
+      </div>
+
+    </div>
+
+
+    <div class="container">
+        <h3>DHand-LightBulb</h3>
+        <p>
+            The DHand-Lightbulb environment consists of a 22-DoF 4 fingered hand, mounted on a 6 DoF Sawyer robot. The environment is based on one originally proposed by Gupta et al, 2021. The task in this domain is for the robot to insert a lightbulb into a simulated lamp, which requires the robot to not only grasp the object, but flip up and manipulate the object in-hand to successfully insert the object, necessitating non trivial reset behaviors.
+        </p>
+        <div class="text-center">
+          <img src="figures/dhand.png" class="img-fluid rounded" style="width: 500px;" alt="">
+        </div>
+    </div>
+
+    <div class="container">
+        <h3>Minitaur-Pen</h3>
+        <p>
+            The Minitaur-Pen task consists of an 8-DoF Minitaur robot confined to a pen environment. The goal of the agent is to navigate to a set of goal locations in the pen. The task is designed to mimic the setup of leaving a robot to learn to navigate within an enclosed setting in an autonomous fashion. This task is different from the other tasks given it is a locomotion task, as opposed to the other tasks being manipulation tasks.
+        </p>
+        <div class="text-center">
+          <img src="figures/minitaur_pen.png" class="img-fluid rounded" style="width: 500px;" alt="">
+        </div>
+    </div>
+</section>
+
+  <section class="features" id="about">
+    <div class="container">
+      <div class="section-heading ">
+           <h2>Authors</h2>
+           <ul>
+            <li><a href="https://cs.stanford.edu/~arcitsh/">Archit Sharma</a>, Stanford University</li>
+            <li><a href="https://kelvinxu.github.io/">Kelvin Xu</a>, UC Berkeley</li>
+            <li><a href="https://nikhilsardana.github.io/">Nikhil Sardana</a>, Stanford University</li>
+            <li><a href="https://scholar.google.com/citations?user=1wLVDP4AAAAJ&hl=en">Abhishek Gupta</a>, UC Berkeley</li>
+            <li><a href="https://karolhausman.github.io/">Karol Hausman</a>, Google &amp; Stanford University</li>
+            <li><a href="https://people.eecs.berkeley.edu/~svlevine/">Sergey Levine</a>, UC Berkeley</li>
+            <li><a href="https://cs.stanford.edu/~cbfinn/">Chelsea Finn</a>, Stanford University</li>
+           </ul>
+      </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="features" id="parametric">
+    <div class="cta-content">
+      <div class="container">
+
+      </div>
+    </div>
+    <div class="overlay"></div>
+  </section>
+
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Plugin JavaScript -->
+  <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+  <!-- Custom scripts for this template -->
+  <script src="js/new-age.min.js"></script>
+
+</body>
+
+</html>
