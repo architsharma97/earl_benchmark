@@ -18,7 +18,7 @@ goal_states = np.array([[0.29072163, 0.74286009, 0.10003595, 1.0,
 class SawyerDoorV2(SawyerDoorCloseEnvV2):
   max_path_length = int(1e8)
 
-  def __init__(self, reward_type='dense', reset_at_goal=False):
+  def __init__(self, reward_type='sparse', reset_at_goal=False):
     self._reset_at_goal = reset_at_goal
 
     super().__init__()
