@@ -137,292 +137,75 @@ if __name__ == '__main__':
       plotter(experiments, mode=mode, max_index=max_index, **plot_config[method])
       
   elif plot_type == 'peg':
-    max_index = int(2e6)
+    max_index = int(3e6)
     plot_name = 'sawyer_peg'
-    if mode == 'transfer':
-      plot_name += '_transfer.png'
-    elif mode == 'll':
-      plot_name += '_ll.png'
-
     title = 'sawyer peg insertion'
 
-    style_idx += 1
-    legend_label = 'VaPRL'
-    print(legend_label)
-    experiment_base = '../../benchmark_results/sawyer_peg/vaprl'
-    experiments = [os.path.join(base_path, experiment_base, str(random_seed)) for random_seed in [0, 1, 2, 3, 4]]
-    if mode == 'transfer':
-      plot_call(experiments, legend_label, plot_style=style_map[style_idx], y_plot='success', linewidth=1.5)
-    elif mode == 'll':
-      compute_lifelong_return(experiments, legend_label, plot_style=style_map[style_idx], linewidth=1.5)
-
-    style_idx += 1
-    legend_label = 'FBRL'
-    print(legend_label)
-    experiment_base = '../../benchmark_results/sawyer_peg/fbrl'
-    experiments = [os.path.join(base_path, experiment_base, str(random_seed)) for random_seed in [0, 1, 2, 3, 4]]
-    if mode == 'transfer':
-      plot_call(experiments, legend_label, plot_style=style_map[style_idx], y_plot='success', linewidth=1.5)
-    elif mode == 'll':
-      compute_lifelong_return(experiments, legend_label, plot_style=style_map[style_idx], linewidth=1.5)
-
-    style_idx += 1
-    legend_label = 'naive'
-    print(legend_label)
-    experiment_base = '../../benchmark_results/sawyer_peg/naive'
-    experiments = [os.path.join(base_path, experiment_base, str(random_seed)) for random_seed in [0, 1, 2, 3, 4]]
-    if mode == 'transfer':
-      plot_call(experiments, legend_label, plot_style=style_map[style_idx], y_plot='success', linewidth=1.5)
-    elif mode == 'll':
-      compute_lifelong_return(experiments, legend_label, plot_style=style_map[style_idx], linewidth=1.5)
-    
-    style_idx += 1
-    legend_label = 'R3L'
-    print(legend_label)
-    experiment_base = os.path.join(base_path, '../../benchmark_results/r3l/peg_longer')
-    if mode == 'transfer':
-      plot_call(experiment_base, legend_label, plot_style=style_map[style_idx], y_plot='success',
-              process_softlearning_data=True, linewidth=1.5)
-    if mode == 'll':
-      compute_lifelong_return(experiment_base, legend_label, plot_style=style_map[style_idx],
-              process_softlearning_data=True, linewidth=1.5)
-
-    style_idx = 19
-    legend_label = 'oracle'
-    print(legend_label)
-    experiment_base = '../../benchmark_results/sawyer_peg/oracle'
-    experiments = [os.path.join(base_path, experiment_base, str(random_seed)) for random_seed in [0, 1, 2, 3, 4]]
-    if mode == 'transfer':
-      plot_call(experiments, legend_label, plot_style=style_map[style_idx], y_plot='success', linewidth=1)
+    base_path = os.path.join(base_path, 'sawyer_peg')
+    for method in ['VaPRL', 'FBRL', 'naive', 'R3L', 'oracle']:
+      print(method)
+      if mode == 'continuing' and method == 'oracle':
+        continue
+      experiment_base = os.path.join(base_path, method.lower())
+      experiments = [os.path.join(experiment_base, str(run_id)) for run_id in [0, 1, 2, 3, 4]]
+      plotter(experiments, mode=mode, max_index=max_index, **plot_config[method])
   
   elif plot_type == 'door':
-    max_index = int(4e6)
+    max_index = int(3e6)
     plot_name = 'sawyer_door'
-    if mode == 'transfer':
-      plot_name += '_transfer.png'
-    elif mode == 'll':
-      plot_name += '_ll.png'
-
     title = 'sawyer door closing'
 
-    style_idx += 1
-    legend_label = 'VaPRL'
-    print(legend_label)
-    experiment_base = 'sawyer_door_v2/vaprl_init_state/reduced_door_range'
-    experiments = [os.path.join(base_path, experiment_base, str(random_seed)) for random_seed in [0, 1, 2, 3, 4]]
-    if mode == 'transfer':
-      plot_call(experiments, legend_label, plot_style=style_map[style_idx], y_plot='success', linewidth=1.5)
-    elif mode == 'll':
-      compute_lifelong_return(experiments, legend_label, plot_style=style_map[style_idx], linewidth=1.5)
-
-    # style_idx += 1
-    # legend_label = 'random'
-    # print(legend_label)
-    # experiment_base = '../reset_free_rl/experiments/sawyer_door_v2/vaprl_init_state/random_goal'
-    # experiments = [os.path.join(base_path, experiment_base, str(random_seed)) for random_seed in [0, 1, 2, 3, 4]]
-    # if mode == 'transfer':
-    #   plot_call(experiments, legend_label, plot_style=style_map[style_idx], y_plot='success', linewidth=1.5)
-    # elif mode == 'll':
-    #   compute_lifelong_return(experiments, legend_label, plot_style=style_map[style_idx], linewidth=1.5)
-
-    style_idx += 1
-    legend_label = 'FBRL'
-    print(legend_label)
-    experiment_base = '../../benchmark_results/sawyer_door_v2/fbrl'
-    experiments = [os.path.join(base_path, experiment_base, str(random_seed)) for random_seed in [0, 1, 2, 3, 4]]
-    if mode == 'transfer':
-      plot_call(experiments, legend_label, plot_style=style_map[style_idx], y_plot='success', linewidth=1.5)
-    elif mode == 'll':
-      compute_lifelong_return(experiments, legend_label, plot_style=style_map[style_idx], linewidth=1.5)
-
-    style_idx += 1
-    legend_label = 'naive'
-    print(legend_label)
-    experiment_base = '../../benchmark_results/sawyer_door_v2/naive'
-    experiments = [os.path.join(base_path, experiment_base, str(random_seed)) for random_seed in [0, 1, 2, 3, 4]]
-    if mode == 'transfer':
-      plot_call(experiments, legend_label, plot_style=style_map[style_idx], y_plot='success', linewidth=1.5)
-    elif mode == 'll':
-      compute_lifelong_return(experiments, legend_label, plot_style=style_map[style_idx], linewidth=1.5)
-    
-    style_idx += 1
-    legend_label = 'R3L'
-    print(legend_label)
-    experiment_base = os.path.join(base_path, '../../benchmark_results/r3l/door_longer')
-    if mode == 'transfer':
-      plot_call(experiment_base, legend_label, plot_style=style_map[style_idx], y_plot='success',
-              process_softlearning_data=True, linewidth=1.5)
-    if mode == 'll':
-      compute_lifelong_return(experiment_base, legend_label, plot_style=style_map[style_idx],
-              process_softlearning_data=True, linewidth=1.5)
-
-    style_idx = 19
-    legend_label = 'oracle'
-    print(legend_label)
-    experiment_base = '../../benchmark_results/sawyer_door_v2/oracle'
-    experiments = [os.path.join(base_path, experiment_base, str(random_seed)) for random_seed in [0, 1, 2, 3, 4]]
-    if mode == 'transfer':
-      plot_call(experiments, legend_label, plot_style=style_map[style_idx], y_plot='success', linewidth=1)
+    base_path = os.path.join(base_path, 'sawyer_door')
+    for method in ['VaPRL', 'FBRL', 'naive', 'R3L', 'oracle']:
+      print(method)
+      if mode == 'continuing' and method == 'oracle':
+        continue
+      experiment_base = os.path.join(base_path, method.lower())
+      experiments = [os.path.join(experiment_base, str(run_id)) for run_id in [0, 1, 2, 3, 4]]
+      plotter(experiments, mode=mode, max_index=max_index, **plot_config[method])
 
   elif plot_type == 'kitchen':
-    max_index = int(4.8e6)
+    max_index = int(5e6)
     plot_name = 'kitchen'
-    yaxis_type = 'return'
-    if mode == 'transfer':
-      plot_name += '_transfer.png'
-    elif mode == 'll':
-      plot_name += '_ll.png'
-
     title = 'kitchen'
 
-    # to account for VaPRL, whose presence will always be felt
-    style_idx += 1
-
-    style_idx += 1
-    legend_label = 'FBRL'
-    print(legend_label)
-    experiment_base = '../../benchmark_results/kitchen_smallreplay/fbrl'
-    experiments = [os.path.join(base_path, experiment_base, str(random_seed)) for random_seed in [0, 1, 2, 3, 4]]
-    if mode == 'transfer':
-      plot_call(experiments, legend_label, plot_style=style_map[style_idx], y_plot=yaxis_type, linewidth=1.5)
-    elif mode == 'll':
-      compute_lifelong_return(experiments, legend_label, plot_style=style_map[style_idx], linewidth=1.5)
-
-    style_idx += 1
-    legend_label = 'naive'
-    print(legend_label)
-    experiment_base = '../../benchmark_results/kitchen_smallreplay/naive'
-    experiments = [os.path.join(base_path, experiment_base, str(random_seed)) for random_seed in [0, 1, 2, 3, 4]]
-    if mode == 'transfer':
-      plot_call(experiments, legend_label, plot_style=style_map[style_idx], y_plot=yaxis_type, linewidth=1.5)
-    elif mode == 'll':
-      compute_lifelong_return(experiments, legend_label, plot_style=style_map[style_idx], linewidth=1.5)
-    
-    style_idx += 1
-    legend_label = 'R3L'
-    print(legend_label)
-    experiment_base = os.path.join(base_path, '../../benchmark_results/r3l/kitchen_v2')
-    if mode == 'transfer':
-      plot_call(experiment_base, legend_label, plot_style=style_map[style_idx], y_plot='success',
-              process_softlearning_data=True, linewidth=1.5)
-    if mode == 'll':
-      compute_lifelong_return(experiment_base, legend_label, plot_style=style_map[style_idx],
-              process_softlearning_data=True, linewidth=1.5)
-
-    style_idx = 19
-    legend_label = 'oracle'
-    print(legend_label)
-    experiment_base = '../../benchmark_results/kitchen_smallreplay/oracle'
-    experiments = [os.path.join(base_path, experiment_base, str(random_seed)) for random_seed in [0, 1, 2, 3, 4]]
-    if mode == 'transfer':
-      plot_call(experiments, legend_label, plot_style=style_map[style_idx], y_plot=yaxis_type, linewidth=1)
+    base_path = os.path.join(base_path, 'kitchen')
+    for method in ['FBRL', 'naive', 'R3L', 'oracle']:
+      print(method)
+      if mode == 'continuing' and method == 'oracle':
+        continue
+      experiment_base = os.path.join(base_path, method.lower())
+      experiments = [os.path.join(experiment_base, str(run_id)) for run_id in [0, 1, 2, 3, 4]]
+      plotter(experiments, mode=mode, max_index=max_index, **plot_config[method])
 
   elif plot_type == 'minitaur':
     max_index = int(3e6)
     plot_name = 'minitaur'
-    yaxis_type = 'return'
-    if mode == 'transfer':
-      plot_name += '_transfer.png'
-    elif mode == 'll':
-      plot_name += '_ll.png'
-
     title = 'minitaur'
 
-    # to account for VaPRL, whose presence will always be felt
-    style_idx += 1
+    base_path = os.path.join(base_path, 'minitaur')
+    for method in ['FBRL', 'naive', 'R3L', 'oracle']:
+      print(method)
+      if mode == 'continuing' and method == 'oracle':
+        continue
+      experiment_base = os.path.join(base_path, method.lower())
+      experiments = [os.path.join(experiment_base, str(run_id)) for run_id in [0, 1, 2, 3, 4]]
+      plotter(experiments, mode=mode, max_index=max_index, **plot_config[method])
 
-    style_idx += 1
-    legend_label = 'FBRL'
-    print(legend_label)
-    experiment_base = '../../benchmark_results/minitaur/fbrl'
-    experiments = [os.path.join(base_path, experiment_base, str(random_seed)) for random_seed in [0, 1, 2, 3, 4]]
-    if mode == 'transfer':
-      plot_call(experiments, legend_label, plot_style=style_map[style_idx], y_plot=yaxis_type, linewidth=1.5)
-    elif mode == 'll':
-      compute_lifelong_return(experiments, legend_label, plot_style=style_map[style_idx], linewidth=1.5)
-
-    style_idx += 1
-    legend_label = 'naive'
-    print(legend_label)
-    experiment_base = '../../benchmark_results/minitaur/naive'
-    experiments = [os.path.join(base_path, experiment_base, str(random_seed)) for random_seed in [0, 1, 2, 3, 4]]
-    if mode == 'transfer':
-      plot_call(experiments, legend_label, plot_style=style_map[style_idx], y_plot=yaxis_type, linewidth=1.5)
-    elif mode == 'll':
-      compute_lifelong_return(experiments, legend_label, plot_style=style_map[style_idx], linewidth=1.5)
-    
-    style_idx += 1
-    legend_label = 'R3L'
-    print(legend_label)
-    experiment_base = os.path.join(base_path, '../../benchmark_results/r3l/minitaur')
-    if mode == 'transfer':
-      plot_call(experiment_base, legend_label, plot_style=style_map[style_idx], y_plot='success',
-              process_softlearning_data=True, linewidth=1.5)
-    if mode == 'll':
-      compute_lifelong_return(experiment_base, legend_label, plot_style=style_map[style_idx],
-              process_softlearning_data=True, linewidth=1.5)
-
-    style_idx = 19
-    legend_label = 'oracle'
-    print(legend_label)
-    experiment_base = '../../benchmark_results/minitaur/oracle'
-    experiments = [os.path.join(base_path, experiment_base, str(random_seed)) for random_seed in [0, 1, 2, 3, 4]]
-    if mode == 'transfer':
-      plot_call(experiments, legend_label, plot_style=style_map[style_idx], y_plot=yaxis_type, linewidth=1)
-  
   elif plot_type == 'bulb':
-    max_index = int(3e6)
-    plot_name = 'bulb'
-    yaxis_type = 'return'
-    if mode == 'transfer':
-      plot_name += '_transfer.png'
-    elif mode == 'll':
-      plot_name += '_ll.png'
+    max_index = int(5e6)
+    plot_name = 'dhand_bulb'
+    title = 'dhand bulb pickup'
 
-    title = 'bulb'
+    base_path = os.path.join(base_path, 'dhand_lightbulb')
+    for method in ['FBRL', 'naive', 'R3L', 'oracle']:
+      print(method)
+      if mode == 'continuing' and method == 'oracle':
+        continue
+      experiment_base = os.path.join(base_path, method.lower())
+      experiments = [os.path.join(experiment_base, str(run_id)) for run_id in [0, 1, 2, 3, 4]]
+      plotter(experiments, mode=mode, max_index=max_index, **plot_config[method])
 
-    # to account for VaPRL, whose presence will always be felt
-    style_idx += 1
-
-    style_idx += 1
-    legend_label = 'FBRL'
-    print(legend_label)
-    experiment_base = '../../benchmark_results/sawyer_bulb/fbrl'
-    experiments = [os.path.join(base_path, experiment_base, str(random_seed)) for random_seed in [0, 1, 2, 3, 4]]
-    if mode == 'transfer':
-      plot_call(experiments, legend_label, plot_style=style_map[style_idx], y_plot=yaxis_type, linewidth=1.5)
-    elif mode == 'll':
-      compute_lifelong_return(experiments, legend_label, plot_style=style_map[style_idx], linewidth=1.5)
-
-    style_idx += 1
-    legend_label = 'naive'
-    print(legend_label)
-    experiment_base = '../../benchmark_results/sawyer_bulb/naive'
-    experiments = [os.path.join(base_path, experiment_base, str(random_seed)) for random_seed in [0, 1, 2, 3, 4]]
-    if mode == 'transfer':
-      plot_call(experiments, legend_label, plot_style=style_map[style_idx], y_plot=yaxis_type, linewidth=1.5)
-    elif mode == 'll':
-      compute_lifelong_return(experiments, legend_label, plot_style=style_map[style_idx], linewidth=1.5)
-    
-    style_idx += 1
-    legend_label = 'R3L'
-    print(legend_label)
-    experiment_base = os.path.join(base_path, '../../benchmark_results/r3l/hand')
-    if mode == 'transfer':
-      plot_call(experiment_base, legend_label, plot_style=style_map[style_idx], y_plot='success',
-              process_softlearning_data=True, linewidth=1.5)
-    if mode == 'll':
-      compute_lifelong_return(experiment_base, legend_label, plot_style=style_map[style_idx],
-              process_softlearning_data=True, linewidth=1.5)
-
-    style_idx = 19
-    legend_label = 'oracle'
-    print(legend_label)
-    experiment_base = '../../benchmark_results/sawyer_bulb/oracle'
-    experiments = [os.path.join(base_path, experiment_base, str(random_seed)) for random_seed in [0, 1, 2, 3, 4]]
-    if mode == 'transfer':
-      plot_call(experiments, legend_label, plot_style=style_map[style_idx], y_plot=yaxis_type, linewidth=1)   
-  
   # final plot config
   plt.grid(False)
   plt.legend(prop={'size': 12}, loc=2)
@@ -439,7 +222,7 @@ if __name__ == '__main__':
     plot_name += '_continuing.png'
 
   ax = plt.gca()
-  # plt.xlabel('Steps in Training Environment', fontsize=18)
+  plt.xlabel('Steps in Training Environment', fontsize=18)
   if mode == 'deployment':
     plt.ylabel('Deployed Policy Evaluation', fontsize=18)
   elif mode == 'continuing':
