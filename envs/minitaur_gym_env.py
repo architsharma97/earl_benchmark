@@ -450,17 +450,28 @@ class MinitaurBulletEnv(gym.Env):
 
 class GoalConditionedMinitaurBulletEnv(MinitaurBulletEnv):
     def __init__(self,
+<<<<<<< HEAD
                  goal_locations=[[0.4, 0.0], [0.2, 0.0], [-0.2, 0.0], [-0.4, 0.0]],
                  visualize_goal=False,
+=======
+                 #
+                 #goal_locations=[[0.2, 0.2], [-0.2, 0.2], [0.2, 0.0], [-0.2, 0.0]],
+                 #
+                 goal_locations=[[0.4, 0.2], [0.2, 0.2], [-0.2, 0.2], [-0.4, 0.2],
+                                 [0.4, 0.0], [0.2, 0.0], [-0.2, 0.0], [-0.4, 0.0],
+                                 [0.4, 0.4], [0.2, 0.4], [-0.2, 0.4], [-0.4, 0.4]],
+                 visualize_goal=True,
+>>>>>>> minitaur
                  motor_velocity_limit=150.,
                  distance_weight=2,
                  **kwargs
                  ):
       self._goal_locations = goal_locations
       self._goal = goal_locations[0]
-
+      self._visualize_goal = visualize_goal
       super(GoalConditionedMinitaurBulletEnv, self).__init__(
         motor_velocity_limit=motor_velocity_limit, distance_weight=distance_weight, **kwargs)
+
       # update observations space (TODO): kelvinxx clean this up
       observation_high = np.zeros((self.observation_space.shape[0] + 2,))
       observation_high[:-2] = self.observation_space.high
@@ -514,18 +525,20 @@ class GoalConditionedMinitaurBulletEnv(MinitaurBulletEnv):
       current_base_position = self.minitaur.GetBasePosition()
       x_dist = current_base_position[0] - self._goal[0] 
       y_dist = current_base_position[1] - self._goal[1] 
-      #distance_reward = -abs(x_dist) - abs(y_dist)
-      distance_reward = -abs(x_dist)
-
-      drift_reward = -abs(current_base_position[1] - self._last_base_position[1])
+      distance_reward = -abs(x_dist) - abs(y_dist)
+      
+      #drift_reward = -abs(current_base_position[1] - self._last_base_position[1])
+      drift_reward = 0.
       shake_reward = -abs(current_base_position[2] - self._last_base_position[2])
       self._last_base_position = current_base_position
       energy_reward = np.abs(
           np.dot(self.minitaur.GetMotorTorques(),
                  self.minitaur.GetMotorVelocities())) * self._time_step
 
+      #reward = (self._distance_weight * distance_reward - self._energy_weight * energy_reward +
+      #         + self._drift_weight * drift_reward + self._shake_weight * shake_reward)
       reward = (self._distance_weight * distance_reward - self._energy_weight * energy_reward +
-               self._drift_weight * drift_reward + self._shake_weight * shake_reward)
+               + self._shake_weight * shake_reward)
 
       self._objectives.append([distance_reward, energy_reward, drift_reward, shake_reward])
       return reward
@@ -533,10 +546,13 @@ class GoalConditionedMinitaurBulletEnv(MinitaurBulletEnv):
     def compute_reward(self, obs):
       x_dist = obs[28] - obs[30] 
       y_dist = obs[29] - obs[31] 
-      distance_reward = -abs(x_dist)
+      distance_reward = -abs(x_dist) - abs(y_dist)
       energy_reward = np.abs(np.dot(obs[8:16], obs[16:24])) * self._time_step
       reward = (self._distance_weight * distance_reward - self._energy_weight * energy_reward)
       return reward
+
+    def _termination(self):
+      return False
 
     def _get_observation(self):
       self._observation = super()._get_observation()
