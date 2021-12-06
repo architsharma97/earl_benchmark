@@ -69,6 +69,13 @@
     <div class="container">
         <!--<h2>Meta-World Evaluation Modes</h2>-->
       <h2>Environments</h2>
+      <h3>Motivation</h3>
+      <p>
+        <strong>Representative Autonomous Settings.</strong> We include a broad array of tasks that reflect the types of autonomous learning scenarios agents may encounter in the real world. This includes different problems in manipulation and locomotion, and tasks with multiple object interactions for which it would be challenging to instrument resets. We also ensure that both the continuing and deployment evaluation protocols of ARL are realistic representative evaluations. 
+      </p>
+      <p>
+        <strong>Directed Exploration.</strong> In the autonomous setting, it may be necessary to practice a task multiple times from different initial states. This gives rise to the need for agents to learn rich reset behaviors. For example, in the instance of a robot learning to interact with multiple objects in a kitchen, the robot must learn to implicitly or explicitly compose different reset behaviors.</p>
+      </p>
       <h3>Tabletop-Organization</h3>
       <div class="row">
         <div class="col-sm">
@@ -78,7 +85,9 @@
         </div>
         <div class="col-sm">
           <div class="text-center" >
-            <img src="figures/tabletop.png" class="img-fluid rounded" style="width: 500px;" alt="">
+        <video autoplay loop muted playsinline style="width: 100%" class="rounded">
+          <source src="figures/tabletop.mp4" type="video/mp4">
+        </video>
           </div>
         </div>
       </div>
@@ -106,7 +115,7 @@
       <div class="row">
         <div class="col-sm">
           <p>
-            The Sawyer-Peg task (Yu et al., 2020) consists of a Sawyer robot required to insert a peg into a designed goal location. The task reward is a sparse indicator function for when the peg is in the goal location. In the transfer setting, the agent must learn to insert the peg starting on the table. Limited demonstrations for inserting and removing the peg are provided.
+            The Sawyer-Peg task, also from <a href="https://meta-world.github.io">MetaWorld</a>, consists of a Sawyer robot required to insert a peg into a designed goal location. The task reward is a sparse indicator function for when the peg is in the goal location. In the transfer setting, the agent must learn to insert the peg starting on the table. Limited demonstrations for inserting and removing the peg are provided.
           </p>
         </div>
         <div class="col-sm">
@@ -122,7 +131,7 @@
       <div class="row">
         <div class="col-sm">
           <p>
-              The Franka-Kitchen is a domain where a 9-DoF robot, situated in a kitchen environment, is required to solve tasks consisting of compound object interactions. The environment consists of a microwave, a hinged cabinet, a burner, and a slide cabinet. One example task is to open the microwave, door and burner. 
+              The Franka-Kitchen (<a href="https://arxiv.org/abs/1910.11956">Gupta et al., 2019</a>) is a domain where a 9-DoF robot, situated in a kitchen environment, is required to solve tasks consisting of compound object interactions. The environment consists of a microwave, a hinged cabinet, a burner, and a slide cabinet. One example task is to open the microwave, door and burner. 
           </p>
           <p>
             This domain presents a number of distinct challenges for ARL. First, the compound nature of each task results in a challenging long horizon problem, which introduces exploration and credit assignment challenges. Second, while generalization is important in solving the environment, combining reset behaviors are equally important given the compositional nature of the task.
@@ -145,7 +154,7 @@
         <div class="row">
           <div class="col-sm">
             <p>
-              The DHand-Lightbulb environment consists of a 22-DoF 4 fingered hand, mounted on a 6 DoF Sawyer robot. The task in this domain is for the robot to insert a lightbulb into a simulated lamp, which requires the robot to not only grasp the object, but flip up and manipulate the object in-hand to successfully insert the object, necessitating non trivial reset behaviors.
+              The DHand-Lightbulb environment (<a href="https://arxiv.org/abs/2104.11203">Gupta et al., 2021</a>) consists of a 22-DoF 4 fingered hand, mounted on a 6 DoF Sawyer robot. The task in this domain is for the robot to insert a lightbulb into a simulated lamp, which requires the robot to not only grasp the object, but flip up and manipulate the object in-hand to successfully insert the object, necessitating non-trivial reset behaviors.
           </p>
           </div>
           <div class="col-sm">
@@ -163,7 +172,7 @@
         <div class="row">
           <div class="col-sm">
             <p>
-              The Minitaur-Pen task consists of an 8-DoF Minitaur robot confined to a pen environment. The goal of the agent is to navigate to a set of goal locations in the pen. The task is designed to mimic the setup of leaving a robot to learn to navigate within an enclosed setting in an autonomous fashion. This task is different from the other tasks given it is a locomotion task, as opposed to the other tasks being manipulation tasks.
+              The Minitaur-Pen task (<a href="https://pybullet.org">Coumans and Bai, 2016</a>) consists of an 8-DoF Minitaur robot confined to a pen environment. The goal of the agent is to navigate to a set of goal locations in the pen. The task is designed to mimic the setup of leaving a robot to learn to navigate within an enclosed setting in an autonomous fashion. This task is different from the other tasks in EARL because it requires locomotion rather than manipulation.
           </p>
           </div>
           <div class="col-sm">
