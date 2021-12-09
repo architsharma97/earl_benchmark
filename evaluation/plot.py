@@ -1,3 +1,5 @@
+import argparse
+
 import matplotlib
 import matplotlib.pyplot as plt
 plt.rcParams["font.family"] = "serif"
@@ -108,10 +110,19 @@ def plotter(experiment_paths, mode, max_index=int(1e8), **plot_config):
       index, means - stds, means + stds, color=plot_config.get('color'), alpha=0.2)
 
 if __name__ == '__main__':
+  parser = argparse.ArgumentParser('Plots for EARL evaluation')
+  parser.add_argument('--eval_dir', type=str, default='benchmark_evaluation_numbers',
+                      help='directory to load evaluation numbers and plots from')
+  parser.add_argument('--env', type=str, default='tabletop',
+                      help='environment name: [tabletop, door, peg, bulb, minitaur, kitchen]')
+  parser.add_argument('--mode', type=str, default='deployment',
+                      help='plot type: [deployment, continuing]')
+  args = parser.parse_args()
+
   # basic configurations
-  base_path = 'benchmark_evaluation_numbers'
-  plot_type = 'bulb'
-  mode = 'continuing'
+  base_path = args.eval_dir
+  plot_type = args.env
+  mode = args.mode
 
   # color_map = ['#73BA68', 'r', 'c', 'm', 'y', '#9A9C99', 'b']
   # style_map = []
