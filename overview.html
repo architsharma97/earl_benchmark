@@ -57,7 +57,7 @@
             <a class="nav-link js-scroll-trigger" href="https://arxiv.org/abs/TBD">Paper</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="https://github.com/architsharma97/persistent_rl_benchmark"">Code</a>
+            <a class="nav-link js-scroll-trigger" href="https://github.com/architsharma97/earl_benchmark"">Code</a>
           </li>
         </ul>
       </div>
@@ -82,35 +82,32 @@
       </div>
       <br>
       <p>
-        Typically, reinforcement learning consists of training an agent by repeatedly running it in an episodic environment. 
-        The learning procedure often takes the following form:
+        Embodied agents such as humans and robots are situated in a continual non-episodic world. Reinforcement learning (RL) promises a framework for enabling artificial agents to learn autonomously with minimal human intervention. However, current episodic RL routine takes the following form:
       <p>
       <ol>
         <li>Sample an initial state <i>s</i>.</li>
-        <li>Let the agent run from <i>s</i> for a short period of time (typically 10<sup>2</sup> to 10<sup>3</sup> steps).</li>
-        <li>Update the learning algorithm and repeat from step (1) until convergence.</li>
-        <li>Report the final performance.</li>
+        <li>Let the agent run from <i>s</i> for a short period of time (typically 100 to 1000 steps).</li>
+        <li>Update the agent (policy, model etc).</li>
+        <li>Repeat till convergence.</li>
       </ol>
       <!--Most reinforcement learning benchmarks focus on providing environments with interesting dynamics and state spaces. 
-      Researchers tend to follow the above procedure to measure the performance of their algorithms.-->      
-      
-      <p>But this idealized setting doesn't always line up with real-world reinforcement learning. In some cases, resets may have a high cost,
-      such as time or labor, or may not be possible at all. How do you know if your learning algorithm will perform well in these scenarios?</p>
+      Researchers tend to follow the above procedure to measure the performance of their algorithms.-->
+      <p> This algorithmic routine relies on the existence of episodes, an assumption that breaks the autonomy of the learning system and cannot be realized without extrinsic interventions, primarily by humans, to reset the environment after every interaction.</p>
 
-      <p>Enter EARL: A collection of environments designed to test how your algorithm fares in complex settings with limited resets. 
-      We provide a formal definition of <i>autonomous reinforcement learning</i> in our paper, but in short, when you run your algorithm on an EARL environment, the training procedure is as follows:</p>
+<!--       <p>But this idealized setting doesn't always line up with real-world reinforcement learning. In some cases, resets may have a high cost,
+      such as time or labor, or may not be possible at all. How do you know if your learning algorithm will perform well in these scenarios?</p> -->
+
+      <p> <b> Environment for Autonomous RL </b> (EARL): The goal of our proposed framework Autonomous RL (ARL) and the accompanying benchmark EARL is to encourage research that develops algorithms for the continual non-episodic world, moving towards building truly autonomous embodied agents. At a high level, algorithms are evaluated on EARL under the following conditions:</p>
       <ol>
         <li>Sample an initial state <i>s</i>.</li>
-        <li>With probability 1-&epsilon;, your agent runs from <i>s</i> according to the environment dynamics.</li>
-        <li>With probability &epsilon;, an intervention occurs and your agent resets to a newly sampled initial state.</li>
+        <li>With probability 1-&epsilon;, the agent runs from <i>s</i> according to the environment dynamics.</li>
+        <li>With probability &epsilon;, an extrinsic intervention resets the environment to a newly sampled initial state.</li>
       </ol>
-      <p>In the EARL environments, &epsilon; is set low (10<sup>-5</sup> to 10<sup>-6</sup>) to mimic a high reset cost.</p>
-
-      <p>EARL provides two different envaluation modes, representing two different ways autonomous RL can be used in the real-world:</p>
+      <p>In the EARL environments, &epsilon; is very low (10<sup>-5</sup> to 10<sup>-6</sup>), such that the agents operate autonomously for several hundred thousands of steps. EARL provides a diverse set of environments to algorithms that can operate autonomously. EARL offers two modes for evaluating the algorithms:</p>
 
       <ul>
-        <li><strong>Deployment Evaluation:</strong> Algorithms first train according to the procedure above. Afterwards, algorithms are evaluated on the environment with standard-length episodes.</li>
-        <li><strong>Continuing Evaluation:</strong> Algorithms are evaluated on their cumulative performance from the initial state.</li>
+        <li><strong>Deployement Evaluation:</strong> The learned policy is intermittently evaluated from the initial state, representing the performance of the policy if it were deployed.</li>
+        <li><strong>Continuing Evaluation:</strong> Algorithms are evaluated on the rate at which they accumulate the reward during their lifetimes.</li>
       </ul>
       
       <img src="img/eval.png" class="img-fluid" style="width:100%; max-width: 50em; display:block; margin-left: auto; margin-right: auto">
@@ -119,7 +116,7 @@
       As motivation, consider training a robot to clean a kitchen. We might want to evaluate how well the robot keeps the kitchen clean over it's entire lifetime, as well as how it performs if it is deployed for a specific cleaning task, like turning off the stove. Both objectives are important, but may not always align, so EARL returns both values for all environments.
         </p>
       <p>
-        The EARL benchmark consists of 5 simulated environments, ranging from the aforementioned kitchen environment to dextrous hand manipulation and locomotive robots.
+        The EARL benchmark consists of 6 simulated environments, ranging from the aforementioned kitchen environment to dextrous hand manipulation and locomotive robots.
         Learn more about them on <a href="environments.html">our environments page &rarr;</a>
     </p>
     </div>
@@ -154,7 +151,7 @@
       <div class="section-heading ">
            <h2>Authors</h2>
            <ul>
-            <li><a href="https://cs.stanford.edu/~arcitsh/">Archit Sharma</a>, Stanford University</li>
+            <li><a href="https://architsharma97.github.io/">Archit Sharma</a>, Stanford University</li>
             <li><a href="https://kelvinxu.github.io/">Kelvin Xu</a>, UC Berkeley</li>
             <li><a href="https://nikhilsardana.github.io/">Nikhil Sardana</a>, Stanford University</li>
             <li><a href="https://scholar.google.com/citations?user=1wLVDP4AAAAJ&hl=en">Abhishek Gupta</a>, UC Berkeley</li>
