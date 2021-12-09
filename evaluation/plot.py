@@ -29,7 +29,11 @@ def smooth(x, alpha):
     x[idx] = (1 - alpha) * x[idx] + alpha * x[idx - 1]
   return x
 
-def make_graph_with_variance(vals, x_interval, max_index=int(1e8), use_standard_error=True):
+def make_graph_with_variance(vals,
+                             x_interval,
+                             max_index=int(1e8) ,
+                             use_standard_error=True,
+                             normalize_by_time=False):
   data_x = []
   data_y = []
   num_seeds = 0
@@ -49,6 +53,8 @@ def make_graph_with_variance(vals, x_interval, max_index=int(1e8), use_standard_
 
   for cur_x, cur_y in zip(data_x, data_y):
     for x, y in zip(cur_x, cur_y):
+      if normalize_by_time:
+        y /= (x + x_interval)
       if x <= cur_max_index:
         if x in plot_dict.keys():
           plot_dict[x].append(y)
@@ -67,8 +73,8 @@ def make_graph_with_variance(vals, x_interval, max_index=int(1e8), use_standard_
     else:
       stds.append(np.std(plot_dict[key]))
 
-  means = np.array(smooth(means, 0.95))
-  stds = np.array(smooth(stds, 0.95))
+  means = np.array(smooth(means, 0.96))
+  stds = np.array(smooth(stds, 0.96))
 
   return index, means, stds
 
@@ -93,16 +99,19 @@ def plotter(experiment_paths, mode, max_index=int(1e8), **plot_config):
         for experiment_path in experiment_paths
   ]
 
-  index, means, stds = make_graph_with_variance(y_coords, eval_interval, max_index=max_index)
+  index, means, stds = make_graph_with_variance(y_coords,
+                                                eval_interval,
+                                                max_index=max_index,
+                                                normalize_by_time=(mode=='continuing'))
   plt.plot(index, means, **plot_config)
   plt.fill_between(
       index, means - stds, means + stds, color=plot_config.get('color'), alpha=0.2)
 
 if __name__ == '__main__':
   # basic configurations
-  base_path = '../../../benchmark_results'
-  plot_type = 'tabletop'
-  mode = 'deployment'
+  base_path = 'benchmark_evaluation_numbers'
+  plot_type = 'bulb'
+  mode = 'continuing'
 
   # color_map = ['#73BA68', 'r', 'c', 'm', 'y', '#9A9C99', 'b']
   # style_map = []
@@ -151,7 +160,7 @@ if __name__ == '__main__':
       plotter(experiments, mode=mode, max_index=max_index, **plot_config[method])
   
   elif plot_type == 'door':
-    max_index = int(3e6)
+    max_index = int(4e6)
     plot_name = 'sawyer_door'
     title = 'sawyer door closing'
 
@@ -198,7 +207,7 @@ if __name__ == '__main__':
     title = 'dhand bulb pickup'
 
     base_path = os.path.join(base_path, 'dhand_lightbulb')
-    for method in ['FBRL', 'naive', 'R3L', 'oracle']:
+    for method in ['FBRL', 'naive', 'oracle']:
       print(method)
       if mode == 'continuing' and method == 'oracle':
         continue
@@ -213,7 +222,7 @@ if __name__ == '__main__':
   # fig = legend.figure
   # fig.canvas.draw()
   # bbox  = legend.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
-  # fig.savefig(os.path.join(base_path, 'plots', 'legend.png'), dpi=200, bbox_inches=bbox)
+  # fig.savefig(os.path.join(base_path, 'legend.png'), dpi=200, bbox_inches=bbox)
   # exit()
 
   if mode == 'deployment':
