@@ -80,7 +80,7 @@
       <div class="row">
         <div class="col-sm">
           <p>
-            The Tabletop-Organization environment consists of a gripper agent, modeled as a pointmass, which can grasp objects that are close to it. The agent's goal is to bring a mug to four different locations designated by a goal coaster. The agent's reward function is a sparse indicator function when the mug is placed at the goal location. Limited demonstrations are provided to the agent.
+            The Tabletop-Organization environment consists of a gripper agent, modeled as a pointmass, which can grasp objects that are close to it. The agent's goal is to bring a mug to four different locations designated by a goal coaster. The agent's reward function is a sparse indicator function when the mug is placed at the goal location.
         </p>
         </div>
         <div class="col-sm">
@@ -99,7 +99,7 @@
     <div class="row">
       <div class="col-sm">
         <p>
-          The Sawyer-Door task, from the <a href="https://meta-world.github.io">MetaWorld benchmark</a>, consists of a Sawyer robot arm who's goal is to close the door whenever it is in an open position. The task reward is a sparse indicator function based on the angle of the door. Repeatedly practicing this task implicitly requires the agent to learn to open the door. Limited demonstrations for opening and closing the door are provided.    
+          The Sawyer-Door task, from the <a href="https://meta-world.github.io">MetaWorld benchmark</a>, consists of a Sawyer robot arm who's goal is to close the door whenever it is in an open position. The task reward is a sparse indicator function based on the angle of the door. Repeatedly practicing this task implicitly requires the agent to learn to open the door.
         </p>
       </div>
       <div class="col-sm">
@@ -115,7 +115,7 @@
       <div class="row">
         <div class="col-sm">
           <p>
-            The Sawyer-Peg task, also from <a href="https://meta-world.github.io">MetaWorld</a>, consists of a Sawyer robot required to insert a peg into a designed goal location. The task reward is a sparse indicator function for when the peg is in the goal location. In the transfer setting, the agent must learn to insert the peg starting on the table. Limited demonstrations for inserting and removing the peg are provided.
+            The Sawyer-Peg task, also from <a href="https://meta-world.github.io">MetaWorld</a>, consists of a Sawyer robot tasked with inserting a peg into the designated goal location. The task reward is a sparse indicator function for when the peg is inserted into the goal location.
           </p>
         </div>
         <div class="col-sm">
@@ -154,7 +154,7 @@
         <div class="row">
           <div class="col-sm">
             <p>
-              The DHand-Lightbulb environment (<a href="https://arxiv.org/abs/2104.11203">Gupta et al., 2021</a>) consists of a 22-DoF 4 fingered hand, mounted on a 6 DoF Sawyer robot. The task in this domain is for the robot to insert a lightbulb into a simulated lamp, which requires the robot to not only grasp the object, but flip up and manipulate the object in-hand to successfully insert the object, necessitating non-trivial reset behaviors.
+              The DHand-Lightbulb environment (<a href="https://arxiv.org/abs/2104.11203">Gupta et al., 2021</a>) consists of a 22-DoF 4 fingered hand, mounted on a 6 DoF Sawyer robot. The task in this domain is for the robot to pickup a lightbulb to a specific location. The high-dimensional action space makes the task extremely challenging.
           </p>
           </div>
           <div class="col-sm">
@@ -172,7 +172,7 @@
         <div class="row">
           <div class="col-sm">
             <p>
-              The Minitaur-Pen task (<a href="https://pybullet.org">Coumans and Bai, 2016</a>) consists of an 8-DoF Minitaur robot confined to a pen environment. The goal of the agent is to navigate to a set of goal locations in the pen. The task is designed to mimic the setup of leaving a robot to learn to navigate within an enclosed setting in an autonomous fashion. This task is different from the other tasks in EARL because it requires locomotion rather than manipulation.
+              The Minitaur-Pen task (<a href="https://pybullet.org">Coumans and Bai, 2016</a>) consists of an 8-DoF Minitaur robot confined to a pen environment. The goal of the agent is to navigate to a set of goal locations in the pen. The task is designed to mimic the setup of leaving a robot to learn to navigate within an enclosed setting in an autonomous fashion.
           </p>
           </div>
           <div class="col-sm">

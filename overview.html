@@ -106,7 +106,7 @@
       <p>In the EARL environments, &epsilon; is very low (10<sup>-5</sup> to 10<sup>-6</sup>), such that the agents operate autonomously for several hundred thousands of steps. EARL provides a diverse set of environments to evaluate autonomous learning algorithms, offering two modes for evaluating the algorithms:</p>
 
       <ul>
-        <li><strong>Deployment Evaluation:</strong> The learned policy is intermittently evaluated from the initial state, representing the performance of the policy if it were deployed.</li>
+        <li><strong>Deployment Evaluation:</strong> The learned policy is intermittently evaluated from the initial state, representing the performance of the policy if it were deployed. Algorithms are evaluated based on how quickly the deployed performance of the policy improves.</li>
         <li><strong>Continuing Evaluation:</strong> Algorithms are evaluated on the rate at which they accumulate the reward during their lifetimes.</li>
       </ul>
       
@@ -116,7 +116,7 @@
       As motivation, consider training a robot to clean a kitchen. We might want to evaluate how well the robot keeps the kitchen clean over it's entire lifetime, as well as how it performs if it is deployed for a specific cleaning task, like turning off the stove. Both objectives are important, but may not always align, so EARL returns both values for all environments.
         </p>
       <p>
-        The EARL benchmark consists of 6 simulated environments, ranging from the aforementioned kitchen environment to dextrous hand manipulation and locomotive robots.
+        The EARL benchmark consists of 6 simulated environments, ranging from the aforementioned kitchen environment to dexterous hand manipulation and locomotive robots.
         Learn more about them on <a href="environments.html">our environments page &rarr;</a>
     </p>
     </div>
