@@ -203,7 +203,7 @@ if __name__ == '__main__':
     plot_name = 'minitaur'
     title = 'minitaur'
 
-    base_path = os.path.join(base_path, 'minitaur')
+    base_path = os.path.join(base_path, 'minitaur_pen')
     for method in ['FBRL', 'naive', 'R3L', 'oracle']:
       print(method)
       if mode == 'continuing' and method == 'oracle':
@@ -218,7 +218,7 @@ if __name__ == '__main__':
     title = 'dhand bulb pickup'
 
     base_path = os.path.join(base_path, 'dhand_lightbulb')
-    for method in ['FBRL', 'naive', 'oracle']:
+    for method in ['FBRL', 'naive', 'oracle', 'R3L']:
       print(method)
       if mode == 'continuing' and method == 'oracle':
         continue
@@ -228,21 +228,21 @@ if __name__ == '__main__':
 
   # final plot config
   plt.grid(False)
-  plt.legend(prop={'size': 12}, loc=2)
+  legend = plt.legend(prop={'size': 12}, loc='best')
 
   # fig = legend.figure
   # fig.canvas.draw()
   # bbox  = legend.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
-  # fig.savefig(os.path.join(base_path, 'legend.png'), dpi=200, bbox_inches=bbox)
+  # fig.savefig(os.path.join(base_path, 'legend.png'), dpi=600, bbox_inches='tight')
   # exit()
 
   if mode == 'deployment':
-    plot_name += '_deployment.png'
+    plot_name += '_transfer.png'
   elif mode == 'continuing':
-    plot_name += '_continuing.png'
+    plot_name += '_ll.png'
 
   ax = plt.gca()
-  plt.xlabel('Steps in Training Environment', fontsize=18)
+  # plt.xlabel('Steps in Training Environment', fontsize=18)
   if mode == 'deployment':
     plt.ylabel('Deployed Policy Evaluation', fontsize=18)
   elif mode == 'continuing':
