@@ -174,11 +174,9 @@ class EARLEnvs(object):
       eval_env = kitchen.Kitchen(task=kitchen_task, reward_type=self._reward_type)
     elif self._env_name == 'minitaur':
       try:
-        #from pybullet_envs.bullet import minitaur_gym_env
         from earl_benchmark.envs import minitaur_gym_env
       except:
         raise Exception("Must install pybullet to use minitaur env")
-      #eval_env = minitaur_gym_env.MinitaurBulletEnv()
       eval_env = minitaur_gym_env.GoalConditionedMinitaurBulletEnv()
 
     return persistent_state_wrapper.PersistentStateWrapper(eval_env, episode_horizon=self._eval_horizon)
