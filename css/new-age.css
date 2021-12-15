@@ -520,3 +520,8 @@ footer ul li a:hover, footer ul li a:focus, footer ul li a:active, footer ul li 
   font-size: 11px;
   padding: 15px 45px;
 }
+
+.navbar-expand-lg {
+  background: -webkit-gradient(linear, right top, left top, from(#96c93d), to(#00b09b));
+  background: linear-gradient(to left, #96c93d, #00b09b);
+}
