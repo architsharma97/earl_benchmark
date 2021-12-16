@@ -189,6 +189,7 @@ header.masthead {
   background: url("../img/pattern.svg"), #AFF1DA;
   background: url("../img/pattern.svg"), -webkit-gradient(linear, right top, left top, from(#AFF1DA), to(#F9EA8F));
   /*background: url("../img/pattern.svg"), radial-gradient(circle, #AFF1DA 0%, #F9EA8F 100%);*/
+  z-index: 999;
 }
 
 header.masthead .header-content {
@@ -214,7 +215,7 @@ header.masthead .device-container .screen img {
 @media (min-width: 992px) {
   header.masthead {
     height: 50vh;
-    min-height: 400px;
+    min-height: 450px;
     padding-top: 0;
     padding-bottom: 0;
   }
