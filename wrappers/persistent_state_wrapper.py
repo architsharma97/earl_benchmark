@@ -34,7 +34,6 @@ class PersistentStateWrapper(Wrapper):
     if hasattr(self.env, 'is_successful'):
         return self.env.is_successful(obs)
     else:
-        # TODO(kelvinxx): what should the default behavior be?
         return False
 
   @property
