@@ -3,7 +3,7 @@
 
 EARL is an open-source benchmark for autonomous reinforcement learning, where the agent learns in a continual non-episodic setting without relying on extrinsic interventions for training. The benchmark consists of 6 challenging environments, covering diverse scenarios from dexterous manipulation to locomotion.
 
-For an overview of the problem setting and description of the environments, checkout our [website](https://architsharma97.github.io/earl_benchmark/index.html). For more details on Autonomous RL and details about evaluation protocols and baselines, please refer to [arxiv paper]().
+For an overview of the problem setting and description of the environments, checkout our [website](https://architsharma97.github.io/earl_benchmark/index.html). For more details on Autonomous RL and details about evaluation protocols and baselines, please refer to [arxiv paper](https://arxiv.org/abs/2112.09605).
 
 ## Setup
 
@@ -42,3 +42,4 @@ EARL is built on top of environments built by various researchers. In particular
 - [metaworld](https://meta-world.github.io/) 
 - [relay policy learning](https://github.com/google-research/relay-policy-learning)
 - [pybullet](https://github.com/bulletphysics/bullet3)
+- [MTRF](https://github.com/facebookresearch/MTRF)
