@@ -19,7 +19,7 @@ After installing the conda env, you can activate your environment with
 conda activate earl
 ```
 
-For the environments based on MuJoCo, you need to obtain a (free) licence [license](https://www.roboti.us/license.html) and copy the key into the subdirectory of your MuJoCo installation. 
+For the environments based on MuJoCo, you need to obtain a (free) [license](https://www.roboti.us/license.html) and copy the key into the subdirectory of your MuJoCo installation. 
 
 ## Using environments in EARL
 
