@@ -1,0 +1,101 @@
+<mujoco>
+  <compiler inertiafromgeom="true" angle="degree" coordinate="local" />
+  <option timestep="0.01" integrator="Euler"/>
+  <default>
+    <joint limited="false" armature="0" damping="0" />
+    <geom conaffinity="1" contype="1" condim="1"  margin="0" friction="1 0.5 0.5" rgba="0.8 0.6 0.4 1" density="100" />
+  </default>
+  <asset>
+    <texture type="skybox" builtin="gradient" width="100" height="100" rgb1="1 1 1" rgb2="0 0 0" />
+    <texture name="texgeom" type="cube" builtin="flat" mark="cross" width="127" height="1278" rgb1="0.8 0.6 0.4" rgb2="0.8 0.6 0.4" markrgb="1 1 1" random="0.01" />
+    <texture name="texplane" type="2d" builtin="checker" rgb1="0 0 0" rgb2="0.8 0.8 0.8" width="100" height="100" />
+    <material name='geom' texture="texgeom" texuniform="true" />
+    <material name='MatPlane' texture="marble2d"/>
+    <material name='wall_tex' texture="darkwood"/>
+    <material name='marble' texture="marble"/>
+    <texture type="2d" name="marble" file="marble.png" />
+    <texture type="2d" name="marble2d" file="light_wood_v3.png" />
+    <texture type="2d" name="darkwood" file="darkwood.png" />
+    <mesh name="mug" file="coffee_mug.stl" scale="8 8 8"/>
+    <mesh name="gripperr" file="magnet.stl" scale="0.01 0.01 0.01"/>
+  </asset>
+
+  <worldbody>
+    <light directional="true" cutoff="100" exponent="1" diffuse=".3 .3 .3" specular=".1 .1 .1" pos="0 0 1.3" dir="-0 0 -1.3" />
+    <geom name='floor' material="MatPlane" pos='0 0 0' size='3.8 3.8 3' type='plane' conaffinity='1' rgba='1 1 1 1' condim='3' />
+    <geom name='left_wall' material="wall_tex" pos='-3.8 0 0.2' size='0.1 3.8 0.2' type='box' conaffinity='1' rgba='1 0 0 1' condim='1' contype='1' />
+    <geom name='right_wall' material="wall_tex"  pos='3.8 0 0.2' size='0.1 3.8 0.2' type='box' conaffinity='1' rgba='1 0 0 1' condim='1' contype='1' />
+    <geom name='front_wall' material="wall_tex"  pos='0 3.8 0.2' size='3.8 0.1 0.2' type='box' conaffinity='1' rgba='1 0 0 1' condim='1' contype='1' />
+    <geom name='back_wall'  material="wall_tex" pos='0 -3.8 0.2' size='3.8 0.1 0.2' type='box' conaffinity='1' rgba='1 0 0 1' condim='1' contype='1' />
+
+    <body name="fist" pos="0 0 0">
+      <!-- <geom name="pointbody" type="sphere" size="0.1" pos="0 0 0.1" /> -->
+      <body name="gripper1" euler="0 0 90" pos="0.6 0 0" >
+        <geom name="pointbodyr" type="mesh" euler="180 0 0" mesh="gripperr" size="0.1" pos="0 0 -0.1" rgba="0 0 0 1"/>
+        <!-- <geom name="pointbodyr" type="mesh" euler="0 0 0" mesh="gripperr" size="0.1" pos="0 0 0.1" rgba="0 0 0 1"/>
+        <geom name="pointbodyl" type="mesh" euler="0 180 0" mesh="gripperr" size="0.1" pos="1.3 0 0.1" rgba="0 0 0 1"/>
+        <geom name='backplate' pos="0.6 0.85 0.1" size='0.4 0.2 0.04' type='box' rgba='0 0 0 1'/>
+        <geom name='backplate2' pos="0.6 0.6 0.1" size='0.2 0.4 0.1' type='box' rgba='0 0 0 1'/>  -->
+      </body>
+
+      <joint name='ballx' type='slide' axis='1 0 0' pos='0 0 0'  limited="true" range="-3 3"/>
+      <joint name='bally' type='slide' axis='0 1 0' pos='0 0 0'  limited="true" range="-3 3"/>
+    </body>
+
+    <body name="redcube" pos="0 0 0">
+      <!-- <geom name="rc" type="box" size="0.2 0.2 0.2" pos="0 0 0.2" rgba="1 0 0 1" conaffinity="0" contype="0"/> -->
+      <geom name="rc" type="mesh" mesh="mug" size="0.2 0.2 0.2" pos="0.6 0 0" conaffinity="0" contype="0"/>
+      <joint name='rcx' type='slide' axis='1 0 0' pos='0 0 0' limited="true" range="-3 3"/>
+      <joint name='rcy' type='slide' axis='0 1 0' pos='0 0 0' limited="true" range="-3 3"/>
+    </body>
+
+    <body name="bluecube" pos="0 0 0">
+      <geom name="bc" type="mesh" mesh="mug" size="0.2 0.2 0.2" pos="0.6 0 0" rgba="1 1 1 1" conaffinity="0" contype="0"/>
+      <joint name='bcx' type='slide' axis='1 0 0' pos='0 0 0' limited="true" range="-3 3"/>
+      <joint name='bcy' type='slide' axis='0 1 0' pos='0 0 0' limited="true" range="-3 3"/>
+    </body>
+
+    <body name="blacksphere" pos="0 0 0">
+      <geom name="bs" type="mesh" mesh="mug" size="0.2 0.2 0.2" pos="0.6 0 0" rgba="0 0 0 1" conaffinity="0" contype="0"/>
+      <joint name='bsx' type='slide' axis='1 0 0' pos='0 0 0' limited="true" range="-3 3"/>
+      <joint name='bsy' type='slide' axis='0 1 0' pos='0 0 0' limited="true" range="-3 3"/>
+    </body>
+
+    <!-- <body name="yellowcylinder" pos="0 0 0">
+      <geom name="yc" type="cylinder" size="0.2 0.2" pos="0 0 0.2" rgba="1 1 0 1" conaffinity="0" contype="0"/>
+      <joint name='ycx' type='slide' axis='1 0 0' pos='0 0 0' />
+      <joint name='ycy' type='slide' axis='0 1 0' pos='0 0 0' />
+    </body> -->
+
+<!--     <geom name="tgt1" type="plane" size="0.2 0.2 0.01" pos="-2.5 -1 0.01" rgba="0 0 1 1"/>
+    <geom name="tgt2" type="plane" size="0.2 0.2 0.01" pos="-2.5 1 0.01" rgba="0 0 0 1" />
+    <geom name="tgt3" type="plane" size="0.2 0.2 0.01" pos="0 2 0.01" rgba="0.4 0.2 1 1"/>
+    <geom name="tgt4" type="plane" size="0.2 0.2 0.01" pos="0 -2 0.01" rgba="1 0.3 0 1"/>
+ -->
+
+    <geom name="tgt1" material="marble" type="plane" size="0.2 0.2 0.03" pos="-2.5 -1 0.01" rgba="1 1 1 1" />
+    <geom name="tgt1outer" type="box" size="0.25 0.25 0.001" pos="-2.5 -1 0.0" rgba="1 0 0 1"/>
+
+    <geom name="tgt2" material="marble" type="plane" size="0.2 0.2 0.03" pos="-2.5 1 0.01" rgba="1 1 1 1" />
+    <geom name="tgt2outer" type="box" size="0.25 0.25 0.001" pos="-2.5 1 0.0" rgba="0 1 0 1"/>
+
+    <geom name="tgt3" material="marble" type="plane" size="0.2 0.2 0.03" pos="0 2 0.01" rgba="1 1 1 1" />
+    <geom name="tgt3outer" type="box" size="0.25 0.25 0.001" pos="0 2 0.0" rgba="0 0 1 1"/>
+
+    <geom name="tgt4" material="marble" type="plane" size="0.2 0.2 0.03" pos="0 -2 0.01" rgba="1 1 1 1" />
+    <geom name="tgt4outer" type="box" size="0.25 0.25 0.001" pos="0 -2 0.0" rgba="0.5 0.5 0.5 1"/>
+
+    <body name="random" pos="-10 -10 -10">
+      <geom name="randombody" type="cylinder" size="0.2 0.2" pos="0 0 0.2" rgba="1 1 0 1" conaffinity="0" contype="0"/>
+      <joint name='random_joint' type='slide' axis='0 1 0' pos='0 0 0' />
+    </body>
+
+  </worldbody>
+
+  <actuator>
+    <motor joint='ballx' ctrlrange="-1 1" ctrllimited="true" />
+    <motor joint='bally' ctrlrange="-1 1" ctrllimited="true" />
+    <motor joint='random_joint' ctrlrange="-1 1" ctrllimited="true" />
+  </actuator>
+
+</mujoco>
