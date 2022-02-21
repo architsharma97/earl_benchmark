@@ -133,9 +133,14 @@ class SawyerPegV2(SawyerXYZEnv):
     return obs
 
   def get_next_goal(self):
-    num_goals = self.goal_states.shape[0]
-    goal_idx = np.random.randint(0, num_goals)
-    return self.goal_states[goal_idx]
+    if not self._reset_at_goal:
+      num_goals = self.goal_states.shape[0]
+      goal_idx = np.random.randint(0, num_goals)
+      return self.goal_states[goal_idx]
+    else:
+      num_goals = self.initial_states.shape[0]
+      goal_idx = np.random.randint(0, num_goals)
+      return self.initial_states[goal_idx].copy()
 
   def reset_goal(self, goal=None):
     if goal is None:
@@ -189,8 +194,8 @@ class SawyerPegV2(SawyerXYZEnv):
             pos_peg, _ = np.split(self._get_state_rand_vec(), 2)
 
       self.obj_init_pos = pos_peg
-      self.peg_head_pos_init = self._get_site_pos('pegHead')
       self._set_obj_xyz(self.obj_init_pos)
+      self.peg_head_pos_init = self._get_site_pos('pegHead')
     else:
       self._reset_hand()
       self.reset_goal()
@@ -198,6 +203,9 @@ class SawyerPegV2(SawyerXYZEnv):
       self.sim.model.body_pos[self.model.body_name2id('box')] = pos_box
 
       goal_pos = self.goal_states[0][4:] - np.array([-0.1, 0., 0.])
+      # diverse_init_positions = np.array([[-0.3, 0.8, 0.02], [-0.4, 0.8, 0.02], [-0.3, 0.9, 0.02], [-0.4, 0.9, 0.02], [-0.2, 0.8, 0.02], [-0.2, 0.75, 0.02], [-0.2, 0.9, 0.02], [-0.1, 0.77, 0.02], [0.0, 0.9, 0.02], [0.1, 0.8, 0.02], [0.15, 0.75, 0.02],
+      #                                    [-0.3, 0.4, 0.02], [-0.4, 0.4, 0.02], [-0.3, 0.45, 0.02], [-0.4, 0.45, 0.02], [-0.2, 0.4, 0.02], [-0.2, 0.45, 0.02], [-0.2, 0.38, 0.02], [-0.1, 0.42, 0.02], [0.0, 0.45, 0.02], [0.1, 0.36, 0.02], [0.15, 0.44, 0.02]])
+      # goal_pos = diverse_init_positions[np.random.randint(0, len(diverse_init_positions))] - np.array([-0.1, 0., 0.])
       self.obj_init_pos = goal_pos + np.random.uniform(-0.02, 0.02, size=3)
       self._set_obj_xyz(self.obj_init_pos)
       self.peg_head_pos_init = self._get_site_pos('pegHead')

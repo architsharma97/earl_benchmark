@@ -157,7 +157,7 @@ if __name__ == '__main__':
       plotter(experiments, mode=mode, max_index=max_index, **plot_config[method])
       
   elif plot_type == 'peg':
-    max_index = int(3e6)
+    max_index = int(7e6)
     plot_name = 'sawyer_peg'
     title = 'sawyer peg insertion'
 
