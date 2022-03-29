@@ -194,12 +194,12 @@ class SawyerDoorV2(SawyerDoorCloseEnvV2):
     self.viewer_setup()
     return self.viewer
   
-  def render(self, mode='human'):
+  def render(self, mode='human', height=480, width=640):
     if mode == 'human':
       self._get_viewer(mode).render()
     elif mode == 'rgb_array':
       return self.sim.render(
-          640, 480,
+          width, height,
           mode='offscreen',
           camera_name='topview'
       )[::-1, :, :]
