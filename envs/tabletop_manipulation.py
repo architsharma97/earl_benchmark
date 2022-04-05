@@ -78,25 +78,24 @@ class TabletopManipulation(MujocoEnv):
       goal = self.get_next_goal()
     self.goal = goal
 
+  def set_state(self, qpos):
+    qpos = np.concatenate([qpos[:4], np.array([-10])])
+    qvel = self.sim.data.qvel.copy()
+    super().set_state(qpos, qvel)
+
   def reset(self):
     self.attached_object = (-1, -1)
-    full_qpos = np.zeros((5,))
+    full_qpos = np.zeros((4,))
 
     if self._reset_at_goal:
       self.reset_goal()
       full_qpos[:4] = self.goal[:4]
       full_qpos[:4] = np.random.uniform(-2.5, 2.5, size=(4,))
-      full_qpos[4] = -10
-      curr_qvel = self.sim.data.qvel.copy()
     else:
       full_qpos[:4] = self.initial_state[:4]
-      # the joint is required for the gripping actuator
-      full_qpos[4] = -10
-
-      curr_qvel = self.sim.data.qvel.copy()
       self.reset_goal()
 
-    self.set_state(full_qpos, curr_qvel)
+    self.set_state(full_qpos)
     self.sim.forward()
     return self._get_obs()
 
@@ -145,10 +144,7 @@ class TabletopManipulation(MujocoEnv):
       for enum_n, i in enumerate(self.object_dict[self.attached_object]):
         curr_qpos[i] = current_obj_pos[enum_n]
 
-    # dummy joint
-    curr_qpos[4] = -10
-    curr_qvel = self.sim.data.qvel.copy()
-    self.set_state(curr_qpos, curr_qvel)
+    self.set_state(curr_qpos)
     self.sim.forward()
 
   def compute_reward(self, obs):
