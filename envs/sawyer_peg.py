@@ -312,7 +312,7 @@ class SawyerPegV2(SawyerXYZEnv):
       return self.sim.render(
           width, height,
           mode='offscreen',
-          camera_name='topview'
+          camera_name='clearview'
       )[::-1, :, :]
     else:
       raise ValueError("mode can only be either 'human' or 'rgb_array'")

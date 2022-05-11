@@ -67,7 +67,7 @@ def make_graph_with_variance(vals,
   print(np.mean(plot_dict[cur_max_index]), np.std(plot_dict[cur_max_index]) / np.sqrt(num_seeds))
 
   index, means, stds = [], [], []
-  for key in sorted(plot_dict.keys()):  # pylint: disable=g-builtin-op
+  for key in sorted(plot_dict.keys()):
     index.append(key)
     means.append(np.mean(plot_dict[key]))
     if use_standard_error:
