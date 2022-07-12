@@ -43,3 +43,6 @@ class PersistentStateWrapper(Wrapper):
   @property
   def total_steps(self):
     return self._total_step_count
+  
+  def __getattr__(self, name):
+    return getattr(self.env, name)
