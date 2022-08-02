@@ -4,5 +4,5 @@
 *.DS_Store
 demonstrations/tabletop_3obj/*
 figures/
-*.png
+benchmark_evaluation_numbers/
 *.egg-info/
