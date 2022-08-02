@@ -11,12 +11,7 @@ EARL can be installed by cloning the repository as follows:
 ```
 git clone https://github.com/architsharma97/earl_benchmark.git
 cd earl_benchmark
-conda env create -f env.yml
-```
-
-After installing the conda env, you can activate your environment with
-```
-conda activate earl
+pip install -e .
 ```
 
 For the environments based on MuJoCo, you need to obtain a (free) [license](https://www.roboti.us/license.html) and copy the key into the subdirectory of your MuJoCo installation. 
