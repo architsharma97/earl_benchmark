@@ -4,8 +4,8 @@ import os
 import numpy as np
 import pickle
 
-from wrappers import persistent_state_wrapper
-from wrappers import lifelong_wrapper
+from earl_benchmark.wrappers import persistent_state_wrapper
+from earl_benchmark.wrappers import lifelong_wrapper
 
 # for every environment, add an entry for the configuration of the environment
 # make a default configuration for environment, the user can change the parameters by passing it to the constructor.

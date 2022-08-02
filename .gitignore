@@ -5,3 +5,4 @@
 demonstrations/tabletop_3obj/*
 figures/
 *.png
+*.egg-info/
