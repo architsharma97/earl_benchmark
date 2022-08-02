@@ -6,3 +6,4 @@ demonstrations/tabletop_3obj/*
 figures/
 benchmark_evaluation_numbers/
 *.egg-info/
+envs/
