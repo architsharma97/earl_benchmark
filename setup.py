@@ -5,7 +5,7 @@ setup(
     packages=['earl_benchmark'],
     version='0.0.1',
     install_requires=[
-        'gym==0.23.1'
+        'gym==0.23.1',
         'metaworld',
         'mujoco-py==2.0.2.9',
         'numpy==1.21.5',
