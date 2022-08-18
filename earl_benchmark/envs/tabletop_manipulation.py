@@ -78,7 +78,8 @@ class TabletopManipulation(MujocoEnv):
       goal = self.get_next_goal()
     self.goal = goal
 
-  def set_state(self, qpos):
+  def set_state(self, qpos, qvel=None):
+    del qvel
     qpos = np.concatenate([qpos[:4], np.array([-10])])
     qvel = self.sim.data.qvel.copy()
     super().set_state(qpos, qvel)
