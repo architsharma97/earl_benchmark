@@ -49,11 +49,19 @@ initial_states = np.array(
 
 goal_states = np.array([[0.0, 0.6, 0.2, 1.0, -0.3 + 0.03, 0.6, 0.0 + 0.13]])
 
+# peg positions only
+wide_initial_states = np.array([[-0.3, 0.8, 0.02], [-0.4, 0.8, 0.02], [-0.3, 0.9, 0.02], [-0.4, 0.9, 0.02],
+                                [-0.2, 0.8, 0.02], [-0.2, 0.75, 0.02], [-0.2, 0.9, 0.02], [-0.1, 0.77, 0.02],
+                                [0.0, 0.9, 0.02], [0.1, 0.8, 0.02], [0.15, 0.75, 0.02], [-0.3, 0.4, 0.02],
+                                [-0.4, 0.4, 0.02], [-0.3, 0.45, 0.02], [-0.4, 0.45, 0.02], [-0.2, 0.4, 0.02],
+                                [-0.2, 0.45, 0.02], [-0.2, 0.38, 0.02], [-0.1, 0.42, 0.02], [0.0, 0.45, 0.02],
+                                [0.1, 0.36, 0.02], [0.15, 0.44, 0.02]])
+
 class SawyerPegV2(SawyerXYZEnv):
   max_path_length = int(1e8)
   TARGET_RADIUS = 0.05
 
-  def __init__(self, reward_type='dense', reset_at_goal=False):
+  def __init__(self, reward_type='dense', reset_at_goal=False, wide_init=False):
 
     hand_low = (-0.5, 0.40, 0.05)
     hand_high = (0.5, 1, 0.5)
@@ -75,13 +83,14 @@ class SawyerPegV2(SawyerXYZEnv):
 
     self.initial_states = initial_states
     self.goal_states = goal_states
+    self.wide_initial_states = wide_initial_states
+    self.wide_init = wide_init
 
     self.obj_init_pos = self.init_config['obj_init_pos']
     self.hand_init_pos = self.init_config['hand_init_pos']
     self.peg_head_pos_init = self._get_site_pos('pegHead')
     self.goal = goal_states[0]
     self._target_pos = self.goal[4:]
-
 
     self._partially_observable = False
     self._set_task_called = True
@@ -186,9 +195,19 @@ class SawyerPegV2(SawyerXYZEnv):
       self.reset_goal()
       pos_box = self.goal_states[0][4:] - np.array([0.03, 0.0, 0.13])
       self.sim.model.body_pos[self.model.body_name2id('box')] = pos_box
-      
+
       pos_peg = self.obj_init_pos
-      if self.random_init:
+      if self.wide_init:
+        # with 0.5 prob, choose from the original initial state distribution,
+        # otherwise, choose from the wider distribution
+        if np.random.uniform() < 0.5:
+          pos_peg, _ = np.split(self._get_state_rand_vec(), 2)
+          while np.linalg.norm(pos_peg[:2] - pos_box[:2]) < 0.1:
+              pos_peg, _ = np.split(self._get_state_rand_vec(), 2)
+        else:
+          pos_peg = self.wide_initial_states[np.random.randint(0, self.wide_initial_states.shape[0])] - np.array([-0.1, 0., 0.])
+          pos_peg += np.random.uniform(-0.02, 0.02, size=3)
+      elif self.random_init:
         pos_peg, _ = np.split(self._get_state_rand_vec(), 2)
         while np.linalg.norm(pos_peg[:2] - pos_box[:2]) < 0.1:
             pos_peg, _ = np.split(self._get_state_rand_vec(), 2)
@@ -203,9 +222,6 @@ class SawyerPegV2(SawyerXYZEnv):
       self.sim.model.body_pos[self.model.body_name2id('box')] = pos_box
 
       goal_pos = self.goal_states[0][4:] - np.array([-0.1, 0., 0.])
-      # diverse_init_positions = np.array([[-0.3, 0.8, 0.02], [-0.4, 0.8, 0.02], [-0.3, 0.9, 0.02], [-0.4, 0.9, 0.02], [-0.2, 0.8, 0.02], [-0.2, 0.75, 0.02], [-0.2, 0.9, 0.02], [-0.1, 0.77, 0.02], [0.0, 0.9, 0.02], [0.1, 0.8, 0.02], [0.15, 0.75, 0.02],
-      #                                    [-0.3, 0.4, 0.02], [-0.4, 0.4, 0.02], [-0.3, 0.45, 0.02], [-0.4, 0.45, 0.02], [-0.2, 0.4, 0.02], [-0.2, 0.45, 0.02], [-0.2, 0.38, 0.02], [-0.1, 0.42, 0.02], [0.0, 0.45, 0.02], [0.1, 0.36, 0.02], [0.15, 0.44, 0.02]])
-      # goal_pos = diverse_init_positions[np.random.randint(0, len(diverse_init_positions))] - np.array([-0.1, 0., 0.])
       self.obj_init_pos = goal_pos + np.random.uniform(-0.02, 0.02, size=3)
       self._set_obj_xyz(self.obj_init_pos)
       self.peg_head_pos_init = self._get_site_pos('pegHead')

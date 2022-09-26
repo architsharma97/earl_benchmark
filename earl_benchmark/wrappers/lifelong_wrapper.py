@@ -41,7 +41,6 @@ class LifelongWrapper(Wrapper):
       except:
           obs = self.env.env._get_obs() # assumes a _get_obs method (with modified goal)
 
-
     return obs, reward, done, info
 
   @property
