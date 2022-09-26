@@ -87,22 +87,17 @@ class EARLEnvs(object):
                reward_type='sparse',
                reset_train_env_at_goal=False,
                setup_as_lifelong_learning=False,
-               no_reset_train_env=False,
                # parameters that have default values in the config
                **kwargs):
     self._env_name = env_name
     self._reward_type = reward_type
     self._reset_train_env_at_goal = reset_train_env_at_goal
     self._setup_as_lifelong_learning = setup_as_lifelong_learning
-    self._no_reset_train_env = no_reset_train_env
     self._kwargs = kwargs
 
     # resolve to default parameters if not provided by the user
     if not self._setup_as_lifelong_learning:
       self._train_horizon = kwargs.get('train_horizon', deployment_eval_config[env_name]['train_horizon'])
-      if self._no_reset_train_env:
-        self._train_horizon = int(1e30)
-
       self._eval_horizon = kwargs.get('eval_horizon', deployment_eval_config[env_name]['eval_horizon'])
       self._num_initial_state_samples = kwargs.get('num_initial_state_samples', deployment_eval_config[env_name]['num_initial_state_samples'])
 
@@ -110,9 +105,6 @@ class EARLEnvs(object):
       self._eval_env = self.get_eval_env()
     else:
       self._train_horizon = kwargs.get('train_horizon', continuing_eval_config[env_name]['train_horizon'])
-      if self._no_reset_train_env:
-        self._train_horizon = int(1e30)
-
       self._num_initial_state_samples = kwargs.get('num_initial_state_samples', continuing_eval_config[env_name]['num_initial_state_samples'])
       self._goal_change_frequency = kwargs.get('goal_change_frequency', continuing_eval_config[env_name]['goal_change_frequency'])
       self._train_env = self.get_train_env(lifelong=True)
