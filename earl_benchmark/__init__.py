@@ -114,7 +114,8 @@ class EARLEnvs(object):
       from earl_benchmark.envs import tabletop_manipulation
       train_env = tabletop_manipulation.TabletopManipulation(task_list='rc_r-rc_k-rc_g-rc_b',
                                                              reward_type=self._reward_type,
-                                                             reset_at_goal=self._reset_train_env_at_goal)
+                                                             reset_at_goal=self._reset_train_env_at_goal,
+                                                             wide_init_distr=self._kwargs.get('wide_init_distr', False))
     elif self._env_name == 'minitaur':
       try:
         from earl_benchmark.envs import minitaur_gym_env
@@ -148,7 +149,8 @@ class EARLEnvs(object):
     if self._env_name == 'tabletop_manipulation':
       from earl_benchmark.envs import tabletop_manipulation
       eval_env = tabletop_manipulation.TabletopManipulation(task_list='rc_r-rc_k-rc_g-rc_b',
-                                                            reward_type=self._reward_type)
+                                                            reward_type=self._reward_type,
+                                                            wide_init_distr=self._kwargs.get('wide_init_distr', False))
     elif self._env_name == 'sawyer_door':
       from earl_benchmark.envs import sawyer_door
       eval_env = sawyer_door.SawyerDoorV2(reward_type=self._reward_type)
