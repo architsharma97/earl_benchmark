@@ -87,17 +87,17 @@ class TabletopManipulation(MujocoEnv):
     super().set_state(qpos, qvel)
   
   def is_valid_init(self, state, goals):
-    if np.linalg.norm(state[0:2]-state[2:4]) < 2.5:
+    if np.linalg.norm(state[0:2]-state[2:4]) < 1:
       return False
 
     for g in goals:
-      if np.linalg.norm(state[2:4] - g[2:4]) < 2.5:
+      if np.linalg.norm(state[2:4] - g[2:4]) < 1:
         return False        
 
     return True
 
   def is_valid_init_rev(self, state, goals):
-    if np.linalg.norm(state[0:2]-state[2:4]) < 2.5:
+    if np.linalg.norm(state[0:2]-state[2:4]) < 1:
       return False       
 
     return True
@@ -140,6 +140,7 @@ class TabletopManipulation(MujocoEnv):
 
     self.set_state(full_qpos)
     self.sim.forward()
+
     return self._get_obs()
 
   def step(self, action):
@@ -213,7 +214,7 @@ class TabletopManipulation(MujocoEnv):
       obs = self._get_obs()
       
     if self._wide_init_distr:
-      return np.linalg.norm(obs[2:4] - obs[8:-2]) <= 0.1
+      return np.linalg.norm(obs[2:4] - obs[8:-2]) <= 0.2
     else:
       return np.linalg.norm(obs[:4] - obs[6:-2]) <= 0.2
     
