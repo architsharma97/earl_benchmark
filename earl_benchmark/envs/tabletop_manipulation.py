@@ -85,20 +85,20 @@ class TabletopManipulation(MujocoEnv):
     qpos = np.concatenate([qpos[:4], np.array([-10])])
     qvel = self.sim.data.qvel.copy()
     super().set_state(qpos, qvel)
-  
+
   def is_valid_init(self, state, goals):
     if np.linalg.norm(state[0:2]-state[2:4]) < 1:
       return False
 
     for g in goals:
       if np.linalg.norm(state[2:4] - g[2:4]) < 1:
-        return False        
+        return False
 
     return True
 
   def is_valid_init_rev(self, state, goals):
     if np.linalg.norm(state[0:2]-state[2:4]) < 1:
-      return False       
+      return False
 
     return True
 
@@ -107,35 +107,17 @@ class TabletopManipulation(MujocoEnv):
     full_qpos = np.zeros((4,))
 
     if self._reset_at_goal:
-      if self._wide_init_distr:
-        potential_goal = np.random.uniform(-2.5, 2.5, size=(4,))
-        while self.is_valid_init(potential_goal, goal_states) == False:
-          potential_goal = np.random.uniform(-2.5, 2.5, size=(4,))
-        self.goal[0:4] = potential_goal[0:4]
-        #------------- random goal pick -----------
-        goals = np.stack(goal_states)
-        goal = goals[np.random.choice(goals.shape[0])]
-
-        full_qpos[2:4] = goal[2:4]
-        full_qpos[0:2] = np.random.uniform(-2.5, 2.5, size=(2,))
-        while self.is_valid_init_rev(full_qpos[:4], goal_states) == False:
-          full_qpos[0:2] = np.random.uniform(-2.5, 2.5, size=(2,))
-          
-        # # the joint is required for the gripping actuator
-        full_qpos[4] = -10
-        curr_qvel = self.sim.data.qvel.copy()
-      else:
-        self.reset_goal()
-        full_qpos[:4] = self.goal[:4]
-        full_qpos[:4] = np.random.uniform(-2.5, 2.5, size=(4,))
+      self.reset_goal()
+      full_qpos[:4] = self.goal[:4]
+      # full_qpos[:4] = np.random.uniform(-2.5, 2.5, size=(4,))
     else:
       if self._wide_init_distr:
         full_qpos[:4] = np.random.uniform(-2.5, 2.5, size=(4,))
-        while self.is_valid_init(full_qpos[:4], goal_states) == False:
+        while not self.is_valid_init(full_qpos[:4], goal_states):
           full_qpos[:4] = np.random.uniform(-2.5, 2.5, size=(4,))
       else:
         full_qpos[:4] = self.initial_state[:4]
-        
+
       self.reset_goal()
 
     self.set_state(full_qpos)
@@ -207,12 +189,12 @@ class TabletopManipulation(MujocoEnv):
       reward += 0.5 * np.exp(-(grip_to_object**2) / 0.01)
 
     return reward
-  
+
   # 0:2 gripper, 2:4 mug, 6:8 goal gripper, 8:10 goal mug pos
   def is_successful(self, obs=None):
     if obs is None:
       obs = self._get_obs()
-      
+
     if self._wide_init_distr:
       return np.linalg.norm(obs[2:4] - obs[8:-2]) <= 0.2
     else:
