@@ -189,6 +189,9 @@ class TabletopManipulation(MujocoEnv):
       reward += 0.5 * np.exp(-(grip_to_object**2) / 0.01)
 
     return reward
+  
+  def get_obs(self):
+    return self._get_obs()
 
   # 0:2 gripper, 2:4 mug, 6:8 goal gripper, 8:10 goal mug pos
   def is_successful(self, obs=None):
